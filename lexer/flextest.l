@@ -41,6 +41,14 @@ typedef union
 {
 	char *string;
 	char character;
+	struct integer_types
+	{
+	} integer;
+
+	struct floating_types
+	{
+	} floating;
+
 	integer_types integer;
 	floating_types floating;
 } YYSTYPE;

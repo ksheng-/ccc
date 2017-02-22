@@ -785,52 +785,55 @@ int yy_flex_debug = 0;
 #define YY_MORE_ADJ 0
 #define YY_RESTORE_YY_MORE_OFFSET
 char *yytext;
-#line 1 "flextest.l"
-#line 4 "flextest.l"
+#line 1 "lexer.l"
+#line 4 "lexer.l"
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 #include <ctype.h>
-#include "tokens-manual.h" // Enumerated token classes
-
+#include "parser.h"
+#include "parser.tab.h"
+/* #include "tokens-manual.h" // Enumerated token classes */
+// #include "parser.h"
 /* Token semantic value */
-typedef union 
-{
-	long l_int;
-	long long ll_int;
-	unsigned long ul_int;
-	unsigned long long ull_int;
-} integer_types;
 
-typedef union 
-{
-	double dbl;
-	long double l_dbl;
-	float flt;
-} floating_types;
 
-typedef enum num_types
-{
-	INTEGER,
-	LONG_INTEGER,
-	LONGLONG_INTEGER,
-	UNSIGNED_INTEGER,
-	UNSIGNED_LONG_INTEGER,
-	UNSIGNED_LONGLONG_INTEGER,
-	FLOAT_REAL,
-	DOUBLE_REAL,
-	LONG_DOUBLE_REAL
-} num_types;
-num_types current_num_type;
+/* enum num_types */
+/* { */
+    /* INTEGER, */
+    /* LONG_INTEGER, */
+    /* LONGLONG_INTEGER, */
+    /* UNSIGNED_INTEGER, */
+    /* UNSIGNED_LONG_INTEGER, */
+    /* UNSIGNED_LONGLONG_INTEGER, */
+    /* FLOAT_REAL, */
+    /* DOUBLE_REAL, */
+    /* LONG_DOUBLE_REAL */
+/* } num_types; */
 
-typedef union
-{
-	char *string;
-	char character;
-	integer_types integer;
-	floating_types floating;
-} YYSTYPE;
-YYSTYPE yylval;
+/* struct number  */
+/* { */
+    /* union value */
+    /* { */
+        /* long l_int; */
+        /* long long ll_int; */
+        /* unsigned long ul_int; */
+        /* unsigned long long ull_int; */
+        /* double dbl; */
+        /* long double l_dbl; */
+        /* float flt; */
+    /* } value; */
+    /* int type; */
+/* } number; */
+/* typedef struct number number; */
+
+/* typedef union */
+/* { */
+    /* char *string; */
+    /* char character; */
+    /* number number; */
+/* } YYSTYPE; */
+/* YYSTYPE yylval; */
 
 /* Error message or linemarkers */
 int current_line = 1;
@@ -838,11 +841,9 @@ char current_file[FILENAME_MAX];
 int str_length;
 
 
+#line 844 "lex.yy.c"
 
-typedef enum tokens token;
-#line 843 "lex.yy.c"
-
-#line 845 "lex.yy.c"
+#line 846 "lex.yy.c"
 
 #define INITIAL 0
 #define sc_linemarker 1
@@ -1065,14 +1066,14 @@ YY_DECL
 		}
 
 	{
-#line 67 "flextest.l"
+#line 68 "lexer.l"
 
 
-#line 70 "flextest.l"
-							char str_buf[512];
-							char *str_ptr;
+#line 71 "lexer.l"
+                            char str_buf[512];
+                            char *str_ptr;
  /*** LINEMARKERS *************************************************************/
-#line 1075 "lex.yy.c"
+#line 1076 "lex.yy.c"
 
 	while ( /*CONSTCOND*/1 )		/* loops until end-of-file is reached */
 		{
@@ -1132,46 +1133,46 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 73 "flextest.l"
+#line 74 "lexer.l"
 {BEGIN(sc_linemarker); current_line = atoi(&yytext[2]);}
 	YY_BREAK
 
 case 2:
 YY_RULE_SETUP
-#line 75 "flextest.l"
+#line 76 "lexer.l"
 {current_line = atoi(yytext);}
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 76 "flextest.l"
+#line 77 "lexer.l"
 {strncpy(current_file, yytext + 1, strlen(yytext) - 1); current_file[strlen(yytext) - 2] = '\0';} /* Need to extend regex to handle contrived filenames */
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 77 "flextest.l"
+#line 78 "lexer.l"
 /* silently consume whitespace */
 	YY_BREAK
 case 5:
 /* rule 5 can match eol */
 YY_RULE_SETUP
-#line 78 "flextest.l"
+#line 79 "lexer.l"
 {BEGIN(INITIAL);}
 	YY_BREAK
 
 /*** CHARACTER LITERALS ******************************************************/
 case 6:
 YY_RULE_SETUP
-#line 82 "flextest.l"
+#line 83 "lexer.l"
 {BEGIN(sc_char);}
 	YY_BREAK
 
 case 7:
 /* rule 7 can match eol */
 YY_RULE_SETUP
-#line 84 "flextest.l"
+#line 85 "lexer.l"
 {fprintf(stderr, "%s:%d:Error:Unterminated char literal\n", current_file, current_line);}
 	YY_BREAK
-/* \\[0'\"\?\\abfntrv]		{ */
+/* \\[0'\"\?\\abfntrv]      { */
 /* if (str_ptr == str_buf) */
 /* { */
 /* *str_ptr++ = '\\';  */
@@ -1182,817 +1183,814 @@ YY_RULE_SETUP
 /* } */
 case 8:
 YY_RULE_SETUP
-#line 95 "flextest.l"
-{BEGIN(INITIAL); yylval.character = '\0'; token t = CHARLIT; return t;}
+#line 96 "lexer.l"
+{BEGIN(INITIAL); yylval.character = '\0'; return CHARLIT;}
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 96 "flextest.l"
-{BEGIN(INITIAL); yylval.character = '\''; token t = CHARLIT; return t;}
+#line 97 "lexer.l"
+{BEGIN(INITIAL); yylval.character = '\''; return CHARLIT;}
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 97 "flextest.l"
-{BEGIN(INITIAL); yylval.character = '\"'; token t = CHARLIT; return t;}
+#line 98 "lexer.l"
+{BEGIN(INITIAL); yylval.character = '\"'; return CHARLIT;}
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 98 "flextest.l"
-{BEGIN(INITIAL); yylval.character = '\?'; token t = CHARLIT; return t;}
+#line 99 "lexer.l"
+{BEGIN(INITIAL); yylval.character = '\?'; return CHARLIT;}
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 99 "flextest.l"
-{BEGIN(INITIAL); yylval.character = '\\'; token t = CHARLIT; return t;}
+#line 100 "lexer.l"
+{BEGIN(INITIAL); yylval.character = '\\'; return CHARLIT;}
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 100 "flextest.l"
-{BEGIN(INITIAL); yylval.character = '\a'; token t = CHARLIT; return t;}
+#line 101 "lexer.l"
+{BEGIN(INITIAL); yylval.character = '\a'; return CHARLIT;}
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 101 "flextest.l"
-{BEGIN(INITIAL); yylval.character = '\b'; token t = CHARLIT; return t;}
+#line 102 "lexer.l"
+{BEGIN(INITIAL); yylval.character = '\b'; return CHARLIT;}
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 102 "flextest.l"
-{BEGIN(INITIAL); yylval.character = '\f'; token t = CHARLIT; return t;}
+#line 103 "lexer.l"
+{BEGIN(INITIAL); yylval.character = '\f'; return CHARLIT;}
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 103 "flextest.l"
-{BEGIN(INITIAL); yylval.character = '\n'; token t = CHARLIT; return t;}
+#line 104 "lexer.l"
+{BEGIN(INITIAL); yylval.character = '\n'; return CHARLIT;}
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 104 "flextest.l"
-{BEGIN(INITIAL); yylval.character = '\t'; token t = CHARLIT; return t;}
+#line 105 "lexer.l"
+{BEGIN(INITIAL); yylval.character = '\t'; return CHARLIT;}
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 105 "flextest.l"
-{BEGIN(INITIAL); yylval.character = '\r'; token t = CHARLIT; return t;}
+#line 106 "lexer.l"
+{BEGIN(INITIAL); yylval.character = '\r'; return CHARLIT;}
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 106 "flextest.l"
-{BEGIN(INITIAL); yylval.character = '\v'; token t = CHARLIT; return t;}
+#line 107 "lexer.l"
+{BEGIN(INITIAL); yylval.character = '\v'; return CHARLIT;}
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 107 "flextest.l"
+#line 108 "lexer.l"
 {/* octal escape sequence */
-								BEGIN(INITIAL);
-								int result;
-								(void) sscanf(yytext + 1, "%o", &result);
-								yylval.character = result;
-								if ( result > 0xff )
-									fprintf(stderr, "%s:%d:Warning:Octal escape sequence \\0%o out of range\n", current_file, current_line, result);
-								token t = CHARLIT;
-								return t;
-							}
+                                BEGIN(INITIAL);
+                                int result;
+                                (void) sscanf(yytext + 1, "%o", &result);
+                                yylval.character = result;
+                                if ( result > 0xff )
+                                    fprintf(stderr, "%s:%d:Warning:Octal escape sequence \\0%o out of range\n", current_file, current_line, result);
+                                return CHARLIT;
+                            }
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 117 "flextest.l"
+#line 117 "lexer.l"
 {/* hex escape sequence */
-								BEGIN(INITIAL);
-								int result;
-								(void) sscanf(yytext + 2, "%x", &result);
-								yylval.character = result;
-								if ( result > 0xff )
-									fprintf(stderr, "%s:%d:Warning:Hex escape sequence \\x%x out of range\n", current_file, current_line, result);
-								token t = CHARLIT;
-								return t;
-							}
+                                BEGIN(INITIAL);
+                                int result;
+                                (void) sscanf(yytext + 2, "%x", &result);
+                                yylval.character = result;
+                                if ( result > 0xff )
+                                    fprintf(stderr, "%s:%d:Warning:Hex escape sequence \\x%x out of range\n", current_file, current_line, result);
+                                return CHARLIT;
+                            }
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 127 "flextest.l"
-{BEGIN(INITIAL); yylval.character = yytext[0]; token t = CHARLIT; return t;}
+#line 126 "lexer.l"
+{BEGIN(INITIAL); yylval.character = yytext[0]; return CHARLIT;}
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 129 "flextest.l"
+#line 128 "lexer.l"
 {
-								BEGIN(INITIAL);
-								yylval.character = yytext[0];
-								fprintf(stderr, "%s:%d:Warning:Unsupported multibyte character literal truncated to first byte sequence.\n", current_file, current_line);
-							}
+                                BEGIN(INITIAL);
+                                yylval.character = yytext[0];
+                                fprintf(stderr, "%s:%d:Warning:Unsupported multibyte character literal truncated to first byte sequence.\n", current_file, current_line);
+                            }
 	YY_BREAK
 
 /*** STRING LITERALS *********************************************************/
 case 24:
 YY_RULE_SETUP
-#line 137 "flextest.l"
+#line 136 "lexer.l"
 {BEGIN(sc_string); str_ptr = str_buf;}
 	YY_BREAK
 
 case 25:
 /* rule 25 can match eol */
 YY_RULE_SETUP
-#line 139 "flextest.l"
+#line 138 "lexer.l"
 {fprintf(stderr, "%s:%d:Error:Unterminated string literal\n", current_file, current_line);}
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
-#line 140 "flextest.l"
+#line 139 "lexer.l"
 {*str_ptr++ = '\0';}
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
-#line 141 "flextest.l"
+#line 140 "lexer.l"
 {*str_ptr++ = '\'';}
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
-#line 142 "flextest.l"
+#line 141 "lexer.l"
 {*str_ptr++ = '\"';}
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
-#line 143 "flextest.l"
+#line 142 "lexer.l"
 {*str_ptr++ = '\?';}
 	YY_BREAK
 case 30:
 YY_RULE_SETUP
-#line 144 "flextest.l"
+#line 143 "lexer.l"
 {*str_ptr++ = '\\';}
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
-#line 145 "flextest.l"
+#line 144 "lexer.l"
 {*str_ptr++ = '\a';}
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
-#line 146 "flextest.l"
+#line 145 "lexer.l"
 {*str_ptr++ = '\b';}
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
-#line 147 "flextest.l"
+#line 146 "lexer.l"
 {*str_ptr++ = '\f';}
 	YY_BREAK
 case 34:
 YY_RULE_SETUP
-#line 148 "flextest.l"
+#line 147 "lexer.l"
 {*str_ptr++ = '\n';}
 	YY_BREAK
 case 35:
 YY_RULE_SETUP
-#line 149 "flextest.l"
+#line 148 "lexer.l"
 {*str_ptr++ = '\t';}
 	YY_BREAK
 case 36:
 YY_RULE_SETUP
-#line 150 "flextest.l"
+#line 149 "lexer.l"
 {*str_ptr++ = '\r';}
 	YY_BREAK
 case 37:
 YY_RULE_SETUP
-#line 151 "flextest.l"
+#line 150 "lexer.l"
 {*str_ptr++ = '\v';}
 	YY_BREAK
 case 38:
 YY_RULE_SETUP
-#line 152 "flextest.l"
+#line 151 "lexer.l"
 {/* octal escape sequence */
-							int result;
-							(void) sscanf(yytext + 1, "%o", &result);
-							*str_ptr++ = result;
-							if ( result > 0xff )
-								fprintf(stderr, "%s:%d:Warning:Octal escape \\0%o sequence out of range\n", current_file, current_line, result);
-						}
+                            int result;
+                            (void) sscanf(yytext + 1, "%o", &result);
+                            *str_ptr++ = result;
+                            if ( result > 0xff )
+                                fprintf(stderr, "%s:%d:Warning:Octal escape \\0%o sequence out of range\n", current_file, current_line, result);
+                        }
 	YY_BREAK
 case 39:
 YY_RULE_SETUP
-#line 159 "flextest.l"
+#line 158 "lexer.l"
 {/* hex escape sequence */
-								int result;
-								(void) sscanf(yytext + 2, "%x", &result);
-								*str_ptr++ = result;
-								if ( result > 0xff )
-									fprintf(stderr, "%s:%d:Warning:Hex escape sequence \\x%x out of range\n", current_file, current_line, result);
-							}
+                                int result;
+                                (void) sscanf(yytext + 2, "%x", &result);
+                                *str_ptr++ = result;
+                                if ( result > 0xff )
+                                    fprintf(stderr, "%s:%d:Warning:Hex escape sequence \\x%x out of range\n", current_file, current_line, result);
+                            }
 	YY_BREAK
-/* \\{DIGIT}+				{ */
+/* \\{DIGIT}+               { */
 /* fprintf(stderr, "%s:%d: Error: bad escape sequence\n", current_file, current_line); */
 /* } */
-/* \\(.|\n)				{*str_ptr++ = yytext[1];} */
+/* \\(.|\n)             {*str_ptr++ = yytext[1];} */
 case 40:
 YY_RULE_SETUP
-#line 170 "flextest.l"
+#line 169 "lexer.l"
 {
-								char *yptr = yytext;
-								while (*yptr)
-									*str_ptr++ = *yptr++;
-							}
+                                char *yptr = yytext;
+                                while (*yptr)
+                                    *str_ptr++ = *yptr++;
+                            }
 	YY_BREAK
-/* [^\"\n]*				{yylval.string = yytext; token t = STRING; return t;} */
+/* [^\"\n]*             {yylval.string = yytext; token t = STRING; return t;} */
 case 41:
 YY_RULE_SETUP
-#line 176 "flextest.l"
+#line 175 "lexer.l"
 {
-								BEGIN(INITIAL); 
-								str_length = str_ptr - str_buf; 
-								yylval.string = malloc(sizeof(str_buf));
-								memcpy(yylval.string, str_buf, str_length);
-								token t = STRING; 
-								return t;
-							}
+                                BEGIN(INITIAL); 
+                                str_length = str_ptr - str_buf; 
+                                yylval.string = malloc(sizeof(str_buf));
+                                memcpy(yylval.string, str_buf, str_length);
+                                return STRING;
+                            }
 	YY_BREAK
 
 /*** KEYWORDS ****************************************************************/
 case 42:
 YY_RULE_SETUP
-#line 188 "flextest.l"
-{token t = AUTO; return t;}
+#line 186 "lexer.l"
+{return AUTO;}
 	YY_BREAK
 case 43:
 YY_RULE_SETUP
-#line 189 "flextest.l"
-{token t = BREAK; return t;}
+#line 187 "lexer.l"
+{return BREAK;}
 	YY_BREAK
 case 44:
 YY_RULE_SETUP
-#line 190 "flextest.l"
-{token t = CASE; return t;}
+#line 188 "lexer.l"
+{return CASE;}
 	YY_BREAK
 case 45:
 YY_RULE_SETUP
-#line 191 "flextest.l"
-{token t = CHAR; return t;}
+#line 189 "lexer.l"
+{return CHAR;}
 	YY_BREAK
 case 46:
 YY_RULE_SETUP
-#line 192 "flextest.l"
-{token t = CONST; return t;}
+#line 190 "lexer.l"
+{return CONST;}
 	YY_BREAK
 case 47:
 YY_RULE_SETUP
-#line 193 "flextest.l"
-{token t = CONTINUE; return t;}
+#line 191 "lexer.l"
+{return CONTINUE;}
 	YY_BREAK
 case 48:
 YY_RULE_SETUP
-#line 194 "flextest.l"
-{token t = DEFAULT; return t;}
+#line 192 "lexer.l"
+{return DEFAULT;}
 	YY_BREAK
 case 49:
 YY_RULE_SETUP
-#line 195 "flextest.l"
-{token t = DO; return t;}
+#line 193 "lexer.l"
+{return DO;}
 	YY_BREAK
 case 50:
 YY_RULE_SETUP
-#line 196 "flextest.l"
-{token t = DOUBLE; return t;}
+#line 194 "lexer.l"
+{return DOUBLE;}
 	YY_BREAK
 case 51:
 YY_RULE_SETUP
-#line 197 "flextest.l"
-{token t = ELSE; return t;}
+#line 195 "lexer.l"
+{return ELSE;}
 	YY_BREAK
 case 52:
 YY_RULE_SETUP
-#line 198 "flextest.l"
-{token t = ENUM; return t;}
+#line 196 "lexer.l"
+{return ENUM;}
 	YY_BREAK
 case 53:
 YY_RULE_SETUP
-#line 199 "flextest.l"
-{token t = EXTERN; return t;}
+#line 197 "lexer.l"
+{return EXTERN;}
 	YY_BREAK
 case 54:
 YY_RULE_SETUP
-#line 200 "flextest.l"
-{token t = FLOAT; return t;}
+#line 198 "lexer.l"
+{return FLOAT;}
 	YY_BREAK
 case 55:
 YY_RULE_SETUP
-#line 201 "flextest.l"
-{token t = FOR; return t;}
+#line 199 "lexer.l"
+{return FOR;}
 	YY_BREAK
 case 56:
 YY_RULE_SETUP
-#line 202 "flextest.l"
-{token t = GOTO; return t;}
+#line 200 "lexer.l"
+{return GOTO;}
 	YY_BREAK
 case 57:
 YY_RULE_SETUP
-#line 203 "flextest.l"
-{token t = IF; return t;}
+#line 201 "lexer.l"
+{return IF;}
 	YY_BREAK
 case 58:
 YY_RULE_SETUP
-#line 204 "flextest.l"
-{token t = INLINE; return t;}
+#line 202 "lexer.l"
+{return INLINE;}
 	YY_BREAK
 case 59:
 YY_RULE_SETUP
-#line 205 "flextest.l"
-{token t = INT; return t;}
+#line 203 "lexer.l"
+{return INT;}
 	YY_BREAK
 case 60:
 YY_RULE_SETUP
-#line 206 "flextest.l"
-{token t = LONG; return t;}
+#line 204 "lexer.l"
+{return LONG;}
 	YY_BREAK
 case 61:
 YY_RULE_SETUP
-#line 207 "flextest.l"
-{token t = REGISTER; return t;}
+#line 205 "lexer.l"
+{return REGISTER;}
 	YY_BREAK
 case 62:
 YY_RULE_SETUP
-#line 208 "flextest.l"
-{token t = RESTRICT; return t;}
+#line 206 "lexer.l"
+{return RESTRICT;}
 	YY_BREAK
 case 63:
 YY_RULE_SETUP
-#line 209 "flextest.l"
-{token t = RETURN; return t;}
+#line 207 "lexer.l"
+{return RETURN;}
 	YY_BREAK
 case 64:
 YY_RULE_SETUP
-#line 210 "flextest.l"
-{token t = SHORT; return t;}
+#line 208 "lexer.l"
+{return SHORT;}
 	YY_BREAK
 case 65:
 YY_RULE_SETUP
-#line 211 "flextest.l"
-{token t = SIGNED; return t;}
+#line 209 "lexer.l"
+{return SIGNED;}
 	YY_BREAK
 case 66:
 YY_RULE_SETUP
-#line 212 "flextest.l"
-{token t = SIZEOF; return t;}
+#line 210 "lexer.l"
+{return SIZEOF;}
 	YY_BREAK
 case 67:
 YY_RULE_SETUP
-#line 213 "flextest.l"
-{token t = STATIC; return t;}
+#line 211 "lexer.l"
+{return STATIC;}
 	YY_BREAK
 case 68:
 YY_RULE_SETUP
-#line 214 "flextest.l"
-{token t = STRUCT; return t;}
+#line 212 "lexer.l"
+{return STRUCT;}
 	YY_BREAK
 case 69:
 YY_RULE_SETUP
-#line 215 "flextest.l"
-{token t = SWITCH; return t;}
+#line 213 "lexer.l"
+{return SWITCH;}
 	YY_BREAK
 case 70:
 YY_RULE_SETUP
-#line 216 "flextest.l"
-{token t = TYPEDEF; return t;}
+#line 214 "lexer.l"
+{return TYPEDEF;}
 	YY_BREAK
 case 71:
 YY_RULE_SETUP
-#line 217 "flextest.l"
-{token t = UNION; return t;}
+#line 215 "lexer.l"
+{return UNION;}
 	YY_BREAK
 case 72:
 YY_RULE_SETUP
-#line 218 "flextest.l"
-{token t = UNSIGNED; return t;}
+#line 216 "lexer.l"
+{return UNSIGNED;}
 	YY_BREAK
 case 73:
 YY_RULE_SETUP
-#line 219 "flextest.l"
-{token t = VOID; return t;}
+#line 217 "lexer.l"
+{return VOID;}
 	YY_BREAK
 case 74:
 YY_RULE_SETUP
-#line 220 "flextest.l"
-{token t = VOLATILE; return t;}
+#line 218 "lexer.l"
+{return VOLATILE;}
 	YY_BREAK
 case 75:
 YY_RULE_SETUP
-#line 221 "flextest.l"
-{token t = WHILE; return t;}
+#line 219 "lexer.l"
+{return WHILE;}
 	YY_BREAK
 case 76:
 YY_RULE_SETUP
-#line 222 "flextest.l"
-{token t = _BOOL; return t;}
+#line 220 "lexer.l"
+{return _BOOL;}
 	YY_BREAK
 case 77:
 YY_RULE_SETUP
-#line 223 "flextest.l"
-{token t = _COMPLEX; return t;}
+#line 221 "lexer.l"
+{return _COMPLEX;}
 	YY_BREAK
 case 78:
 YY_RULE_SETUP
-#line 224 "flextest.l"
-{token t = _IMAGINARY; return t;}
+#line 222 "lexer.l"
+{return _IMAGINARY;}
 	YY_BREAK
 /*** IDENTIFIERS *************************************************************/
 case 79:
 YY_RULE_SETUP
-#line 227 "flextest.l"
-{yylval.string = yytext; token t = IDENT; return t;}
+#line 225 "lexer.l"
+{yylval.string = yytext; return IDENT;}
 	YY_BREAK
 /*** PUNCTUATORS *************************************************************/
 case 80:
 YY_RULE_SETUP
-#line 230 "flextest.l"
+#line 228 "lexer.l"
 {return *yytext;}
 	YY_BREAK
 case 81:
 YY_RULE_SETUP
-#line 231 "flextest.l"
+#line 229 "lexer.l"
 {return *yytext;}
 	YY_BREAK
 case 82:
 YY_RULE_SETUP
-#line 232 "flextest.l"
+#line 230 "lexer.l"
 {return *yytext;}
 	YY_BREAK
 case 83:
 YY_RULE_SETUP
-#line 233 "flextest.l"
+#line 231 "lexer.l"
 {return *yytext;}
 	YY_BREAK
 case 84:
 YY_RULE_SETUP
-#line 234 "flextest.l"
+#line 232 "lexer.l"
 {return *yytext;}
 	YY_BREAK
 case 85:
 YY_RULE_SETUP
-#line 235 "flextest.l"
+#line 233 "lexer.l"
 {return *yytext;}
 	YY_BREAK
 case 86:
 YY_RULE_SETUP
-#line 236 "flextest.l"
+#line 234 "lexer.l"
 {return *yytext;}
 	YY_BREAK
 case 87:
 YY_RULE_SETUP
-#line 237 "flextest.l"
+#line 235 "lexer.l"
 {return *yytext;}
 	YY_BREAK
 case 88:
 YY_RULE_SETUP
-#line 238 "flextest.l"
+#line 236 "lexer.l"
 {return *yytext;}
 	YY_BREAK
 case 89:
 YY_RULE_SETUP
-#line 239 "flextest.l"
+#line 237 "lexer.l"
 {return *yytext;}
 	YY_BREAK
 case 90:
 YY_RULE_SETUP
-#line 240 "flextest.l"
+#line 238 "lexer.l"
 {return *yytext;}
 	YY_BREAK
 case 91:
 YY_RULE_SETUP
-#line 241 "flextest.l"
+#line 239 "lexer.l"
 {return *yytext;}
 	YY_BREAK
 case 92:
 YY_RULE_SETUP
-#line 242 "flextest.l"
+#line 240 "lexer.l"
 {return *yytext;}
 	YY_BREAK
 case 93:
 YY_RULE_SETUP
-#line 243 "flextest.l"
+#line 241 "lexer.l"
 {return *yytext;}
 	YY_BREAK
 case 94:
 YY_RULE_SETUP
-#line 244 "flextest.l"
+#line 242 "lexer.l"
 {return *yytext;}
 	YY_BREAK
 case 95:
 YY_RULE_SETUP
-#line 245 "flextest.l"
+#line 243 "lexer.l"
 {return *yytext;}
 	YY_BREAK
 case 96:
 YY_RULE_SETUP
-#line 246 "flextest.l"
+#line 244 "lexer.l"
 {return *yytext;}
 	YY_BREAK
 case 97:
 YY_RULE_SETUP
-#line 247 "flextest.l"
+#line 245 "lexer.l"
 {return *yytext;}
 	YY_BREAK
 case 98:
 YY_RULE_SETUP
-#line 248 "flextest.l"
+#line 246 "lexer.l"
 {return *yytext;}
 	YY_BREAK
 case 99:
 YY_RULE_SETUP
-#line 249 "flextest.l"
+#line 247 "lexer.l"
 {return *yytext;}
 	YY_BREAK
 case 100:
 YY_RULE_SETUP
-#line 250 "flextest.l"
+#line 248 "lexer.l"
 {return *yytext;}
 	YY_BREAK
 case 101:
 YY_RULE_SETUP
-#line 251 "flextest.l"
+#line 249 "lexer.l"
 {return *yytext;}
 	YY_BREAK
 case 102:
 YY_RULE_SETUP
-#line 252 "flextest.l"
+#line 250 "lexer.l"
 {return *yytext;}
 	YY_BREAK
 case 103:
 YY_RULE_SETUP
-#line 253 "flextest.l"
+#line 251 "lexer.l"
 {return *yytext;}
 	YY_BREAK
 case 104:
 YY_RULE_SETUP
-#line 254 "flextest.l"
+#line 252 "lexer.l"
 {return *yytext;}
 	YY_BREAK
 case 105:
 YY_RULE_SETUP
-#line 255 "flextest.l"
-{token t = INDSEL; return t;}	
+#line 253 "lexer.l"
+{return INDSEL;}   
 	YY_BREAK
 case 106:
 YY_RULE_SETUP
-#line 256 "flextest.l"
-{token t = PLUSPLUS; return t;}
+#line 254 "lexer.l"
+{return PLUSPLUS;}
 	YY_BREAK
 case 107:
 YY_RULE_SETUP
-#line 257 "flextest.l"
-{token t = MINUSMINUS; return t;}
+#line 255 "lexer.l"
+{return MINUSMINUS;}
 	YY_BREAK
 case 108:
 YY_RULE_SETUP
-#line 258 "flextest.l"
-{token t = SHL; return t;}
+#line 256 "lexer.l"
+{return SHL;}
 	YY_BREAK
 case 109:
 YY_RULE_SETUP
-#line 259 "flextest.l"
-{token t = SHR; return t;}
+#line 257 "lexer.l"
+{return SHR;}
 	YY_BREAK
 case 110:
 YY_RULE_SETUP
-#line 260 "flextest.l"
-{token t = LTEQ; return t;}
+#line 258 "lexer.l"
+{return LTEQ;}
 	YY_BREAK
 case 111:
 YY_RULE_SETUP
-#line 261 "flextest.l"
-{token t = GTEQ; return t;}
+#line 259 "lexer.l"
+{return GTEQ;}
 	YY_BREAK
 case 112:
 YY_RULE_SETUP
-#line 262 "flextest.l"
-{token t = EQEQ; return t;}
+#line 260 "lexer.l"
+{return EQEQ;}
 	YY_BREAK
 case 113:
 YY_RULE_SETUP
-#line 263 "flextest.l"
-{token t = NOTEQ; return t;}
+#line 261 "lexer.l"
+{return NOTEQ;}
 	YY_BREAK
 case 114:
 YY_RULE_SETUP
-#line 264 "flextest.l"
-{token t = LOGAND; return t;}
+#line 262 "lexer.l"
+{return LOGAND;}
 	YY_BREAK
 case 115:
 YY_RULE_SETUP
-#line 265 "flextest.l"
-{token t = LOGOR; return t;}
+#line 263 "lexer.l"
+{return LOGOR;}
 	YY_BREAK
 case 116:
 YY_RULE_SETUP
-#line 266 "flextest.l"
-{token t = ELLIPSIS; return t;}
+#line 264 "lexer.l"
+{return ELLIPSIS;}
 	YY_BREAK
 case 117:
 YY_RULE_SETUP
-#line 267 "flextest.l"
-{token t = TIMESEQ; return t;}
+#line 265 "lexer.l"
+{return TIMESEQ;}
 	YY_BREAK
 case 118:
 YY_RULE_SETUP
-#line 268 "flextest.l"
-{token t = DIVEQ; return t;}
+#line 266 "lexer.l"
+{return DIVEQ;}
 	YY_BREAK
 case 119:
 YY_RULE_SETUP
-#line 269 "flextest.l"
-{token t = MODEQ; return t;}
+#line 267 "lexer.l"
+{return MODEQ;}
 	YY_BREAK
 case 120:
 YY_RULE_SETUP
-#line 270 "flextest.l"
-{token t = PLUSEQ; return t;}
+#line 268 "lexer.l"
+{return PLUSEQ;}
 	YY_BREAK
 case 121:
 YY_RULE_SETUP
-#line 271 "flextest.l"
-{token t = MINUSEQ; return t;}
+#line 269 "lexer.l"
+{return MINUSEQ;}
 	YY_BREAK
 case 122:
 YY_RULE_SETUP
-#line 272 "flextest.l"
-{token t = SHLEQ; return t;}
+#line 270 "lexer.l"
+{return SHLEQ;}
 	YY_BREAK
 case 123:
 YY_RULE_SETUP
-#line 273 "flextest.l"
-{token t = SHREQ; return t;}
+#line 271 "lexer.l"
+{return SHREQ;}
 	YY_BREAK
 case 124:
 YY_RULE_SETUP
-#line 274 "flextest.l"
-{token t = ANDEQ; return t;}
+#line 272 "lexer.l"
+{return ANDEQ;}
 	YY_BREAK
 case 125:
 YY_RULE_SETUP
-#line 275 "flextest.l"
-{token t = OREQ; return t;}
+#line 273 "lexer.l"
+{return OREQ;}
 	YY_BREAK
 case 126:
 YY_RULE_SETUP
-#line 276 "flextest.l"
-{token t = XOREQ; return t;}
+#line 274 "lexer.l"
+{return XOREQ;}
 	YY_BREAK
 /*** NUMBERS *****************************************************************/
 /* Ints */
 case 127:
 YY_RULE_SETUP
-#line 281 "flextest.l"
-{current_num_type = INTEGER; yylval.integer.l_int = strtol(yytext, NULL, 10); token t = NUMBER; return t;}
+#line 279 "lexer.l"
+{yylval.number.type = INTEGER; yylval.number.value.l_int = strtol(yytext, NULL, 10);  return NUMBER;}
 	YY_BREAK
 case 128:
 YY_RULE_SETUP
-#line 282 "flextest.l"
-{current_num_type = INTEGER; yylval.integer.l_int = strtol(yytext, NULL, 8);  token t = NUMBER; return t;}
+#line 280 "lexer.l"
+{yylval.number.type = INTEGER; yylval.number.value.l_int = strtol(yytext, NULL, 8);   return NUMBER;}
 	YY_BREAK
 case 129:
 YY_RULE_SETUP
-#line 283 "flextest.l"
-{current_num_type = INTEGER; yylval.integer.l_int = strtol(yytext, NULL, 16); token t = NUMBER; return t;}
+#line 281 "lexer.l"
+{yylval.number.type = INTEGER; yylval.number.value.l_int = strtol(yytext, NULL, 16);  return NUMBER;}
 	YY_BREAK
 /* Long ints */
 case 130:
 YY_RULE_SETUP
-#line 286 "flextest.l"
-{current_num_type = LONG_INTEGER; yylval.integer.l_int = strtol(yytext, NULL, 10); token t = NUMBER; return t;}
+#line 284 "lexer.l"
+{yylval.number.type = LONG_INTEGER; yylval.number.value.l_int = strtol(yytext, NULL, 10); return NUMBER;}
 	YY_BREAK
 case 131:
 YY_RULE_SETUP
-#line 287 "flextest.l"
-{current_num_type = LONG_INTEGER; yylval.integer.l_int = strtol(yytext, NULL, 8); token t = NUMBER; return t;}
+#line 285 "lexer.l"
+{yylval.number.type = LONG_INTEGER; yylval.number.value.l_int = strtol(yytext, NULL, 8); return NUMBER;}
 	YY_BREAK
 case 132:
 YY_RULE_SETUP
-#line 288 "flextest.l"
-{current_num_type = LONG_INTEGER; yylval.integer.l_int = strtol(yytext, NULL, 16); token t = NUMBER; return t;}
+#line 286 "lexer.l"
+{yylval.number.type = LONG_INTEGER; yylval.number.value.l_int = strtol(yytext, NULL, 16); return NUMBER;}
 	YY_BREAK
 /* Long long ints */
 case 133:
 YY_RULE_SETUP
-#line 291 "flextest.l"
-{current_num_type = LONGLONG_INTEGER; yylval.integer.ll_int = strtoll(yytext, NULL, 10); token t = NUMBER; return t;}
+#line 289 "lexer.l"
+{yylval.number.type = LONGLONG_INTEGER; yylval.number.value.ll_int = strtoll(yytext, NULL, 10); return NUMBER;}
 	YY_BREAK
 case 134:
 YY_RULE_SETUP
-#line 292 "flextest.l"
-{current_num_type = LONGLONG_INTEGER; yylval.integer.ll_int = strtoll(yytext, NULL, 8); token t = NUMBER; return t;}
+#line 290 "lexer.l"
+{yylval.number.type = LONGLONG_INTEGER; yylval.number.value.ll_int = strtoll(yytext, NULL, 8); return NUMBER;}
 	YY_BREAK
 case 135:
 YY_RULE_SETUP
-#line 293 "flextest.l"
-{current_num_type = LONGLONG_INTEGER; yylval.integer.ll_int = strtoll(yytext, NULL, 16); token t = NUMBER; return t;}
+#line 291 "lexer.l"
+{yylval.number.type = LONGLONG_INTEGER; yylval.number.value.ll_int = strtoll(yytext, NULL, 16); return NUMBER;}
 	YY_BREAK
 /* Unsigned ints */
 case 136:
 YY_RULE_SETUP
-#line 296 "flextest.l"
-{current_num_type = UNSIGNED_INTEGER; yylval.integer.ul_int = strtoul(yytext, NULL, 10); token t = NUMBER; return t;}
+#line 294 "lexer.l"
+{yylval.number.type = UNSIGNED_INTEGER; yylval.number.value.ul_int = strtoul(yytext, NULL, 10); return NUMBER;}
 	YY_BREAK
 case 137:
 YY_RULE_SETUP
-#line 297 "flextest.l"
-{current_num_type = UNSIGNED_INTEGER; yylval.integer.ul_int = strtoul(yytext, NULL, 8); token t = NUMBER; return t;}
+#line 295 "lexer.l"
+{yylval.number.type = UNSIGNED_INTEGER; yylval.number.value.ul_int = strtoul(yytext, NULL, 8); return NUMBER;}
 	YY_BREAK
 case 138:
 YY_RULE_SETUP
-#line 298 "flextest.l"
-{current_num_type = UNSIGNED_INTEGER; yylval.integer.ul_int = strtoul(yytext, NULL, 16); token t = NUMBER; return t;}
+#line 296 "lexer.l"
+{yylval.number.type = UNSIGNED_INTEGER; yylval.number.value.ul_int = strtoul(yytext, NULL, 16); return NUMBER;}
 	YY_BREAK
 /* Unsigned long ints */
 case 139:
 YY_RULE_SETUP
-#line 301 "flextest.l"
-{current_num_type = UNSIGNED_LONG_INTEGER; yylval.integer.ul_int = strtoul(yytext, NULL, 10); token t = NUMBER; return t;}
+#line 299 "lexer.l"
+{yylval.number.type = UNSIGNED_LONG_INTEGER; yylval.number.value.ul_int = strtoul(yytext, NULL, 10); return NUMBER;}
 	YY_BREAK
 case 140:
 YY_RULE_SETUP
-#line 302 "flextest.l"
-{current_num_type = UNSIGNED_LONG_INTEGER; yylval.integer.ul_int = strtoul(yytext, NULL, 8); token t = NUMBER; return t;}
+#line 300 "lexer.l"
+{yylval.number.type = UNSIGNED_LONG_INTEGER; yylval.number.value.ul_int = strtoul(yytext, NULL, 8); return NUMBER;}
 	YY_BREAK
 case 141:
 YY_RULE_SETUP
-#line 303 "flextest.l"
-{current_num_type = UNSIGNED_LONG_INTEGER; yylval.integer.ul_int = strtoul(yytext, NULL, 16); token t = NUMBER; return t;}
+#line 301 "lexer.l"
+{yylval.number.type = UNSIGNED_LONG_INTEGER; yylval.number.value.ul_int = strtoul(yytext, NULL, 16); return NUMBER;}
 	YY_BREAK
 /* Unsigned long long ints */
 case 142:
 YY_RULE_SETUP
-#line 306 "flextest.l"
-{current_num_type = UNSIGNED_LONGLONG_INTEGER; yylval.integer.ull_int = strtoull(yytext, NULL, 10); token t = NUMBER; return t;}
+#line 304 "lexer.l"
+{yylval.number.type = UNSIGNED_LONGLONG_INTEGER; yylval.number.value.ull_int = strtoull(yytext, NULL, 10); return NUMBER;}
 	YY_BREAK
 case 143:
 YY_RULE_SETUP
-#line 307 "flextest.l"
-{current_num_type = UNSIGNED_LONGLONG_INTEGER; yylval.integer.ull_int = strtoull(yytext, NULL, 8); token t = NUMBER; return t;}
+#line 305 "lexer.l"
+{yylval.number.type = UNSIGNED_LONGLONG_INTEGER; yylval.number.value.ull_int = strtoull(yytext, NULL, 8); return NUMBER;}
 	YY_BREAK
 case 144:
 YY_RULE_SETUP
-#line 308 "flextest.l"
-{current_num_type = UNSIGNED_LONGLONG_INTEGER; yylval.integer.ull_int = strtoull(yytext, NULL, 16); token t = NUMBER; return t;}
+#line 306 "lexer.l"
+{yylval.number.type = UNSIGNED_LONGLONG_INTEGER; yylval.number.value.ull_int = strtoull(yytext, NULL, 16); return NUMBER;}
 	YY_BREAK
 /* Double */
 case 145:
 YY_RULE_SETUP
-#line 311 "flextest.l"
-{current_num_type = DOUBLE_REAL; yylval.floating.dbl = strtod(yytext, NULL); token t = NUMBER; return t;}
+#line 309 "lexer.l"
+{yylval.number.type = DOUBLE_REAL; yylval.number.value.dbl = strtod(yytext, NULL); return NUMBER;}
 	YY_BREAK
 case 146:
 YY_RULE_SETUP
-#line 312 "flextest.l"
-{current_num_type = DOUBLE_REAL; yylval.floating.dbl = strtod(yytext, NULL); token t = NUMBER; return t;}
+#line 310 "lexer.l"
+{yylval.number.type = DOUBLE_REAL; yylval.number.value.dbl = strtod(yytext, NULL); return NUMBER;}
 	YY_BREAK
 /* Long double */
 case 147:
 YY_RULE_SETUP
-#line 315 "flextest.l"
-{current_num_type = LONG_DOUBLE_REAL; yylval.floating.l_dbl = strtold(yytext, NULL); token t = NUMBER; return t;}
+#line 313 "lexer.l"
+{yylval.number.type = LONG_DOUBLE_REAL; yylval.number.value.l_dbl = strtold(yytext, NULL); return NUMBER;}
 	YY_BREAK
 case 148:
 YY_RULE_SETUP
-#line 316 "flextest.l"
-{current_num_type = LONG_DOUBLE_REAL; yylval.floating.l_dbl = strtold(yytext, NULL); token t = NUMBER; return t;}
+#line 314 "lexer.l"
+{yylval.number.type = LONG_DOUBLE_REAL; yylval.number.value.l_dbl = strtold(yytext, NULL); return NUMBER;}
 	YY_BREAK
 /* Float */
 case 149:
 YY_RULE_SETUP
-#line 319 "flextest.l"
-{current_num_type = FLOAT_REAL; yylval.floating.flt = strtof(yytext, NULL); token t = NUMBER; return t;}
+#line 317 "lexer.l"
+{yylval.number.type = FLOAT_REAL; yylval.number.value.flt = strtof(yytext, NULL); return NUMBER;}
 	YY_BREAK
 case 150:
 YY_RULE_SETUP
-#line 320 "flextest.l"
-{current_num_type = FLOAT_REAL; yylval.floating.flt = strtof(yytext, NULL); token t = NUMBER; return t;}
+#line 318 "lexer.l"
+{yylval.number.type = FLOAT_REAL; yylval.number.value.flt = strtof(yytext, NULL); return NUMBER;}
 	YY_BREAK
 /*** MISC ********************************************************************/
 case YY_STATE_EOF(INITIAL):
 case YY_STATE_EOF(sc_linemarker):
 case YY_STATE_EOF(sc_char):
 case YY_STATE_EOF(sc_string):
-#line 325 "flextest.l"
-{token t = TOKEOF; return t;}
+#line 323 "lexer.l"
+{return TOKEOF;}
 	YY_BREAK
 case 151:
 /* rule 151 can match eol */
 YY_RULE_SETUP
-#line 326 "flextest.l"
+#line 324 "lexer.l"
 {++current_line;}
 	YY_BREAK
 case 152:
 YY_RULE_SETUP
-#line 327 "flextest.l"
+#line 325 "lexer.l"
 /* silently consume whitespace */
 	YY_BREAK
 case 153:
 YY_RULE_SETUP
-#line 328 "flextest.l"
-{fprintf(stderr, "Error: unrecognized character '%s'\n", yytext);}	/* Unrecognized token */
+#line 326 "lexer.l"
+{fprintf(stderr, "Error: unrecognized character '%s'\n", yytext);}  /* Unrecognized token */
 	YY_BREAK
 case 154:
 YY_RULE_SETUP
-#line 330 "flextest.l"
+#line 328 "lexer.l"
 ECHO;
 	YY_BREAK
-#line 1995 "lex.yy.c"
+#line 1993 "lex.yy.c"
 
 	case YY_END_OF_BUFFER:
 		{
@@ -2994,367 +2992,367 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 330 "flextest.l"
+#line 328 "lexer.l"
 
 
-int main()
-{
-	/* Token class returned from yylex() */
-	int t;
-	char c;
-	char buf[512];
-	while (t = yylex())
-	{
-		printf("%s	%d	", current_file, current_line);
-		switch(t)
-		{
-			case CHARLIT:
-/* \\[0'\"\?\\abfntrv] */
-				printf("CHARLIT");
-				switch(yylval.character)
-				{
-					case '\0': printf("\t\\0\n"); break;
-					case '\'': printf("\t\\\'\n"); break;
-					case '\"': printf("\t\\\"\n"); break;
-					case '\?': printf("\t\\?\n"); break;
-					case '\\': printf("\t\\\\\n"); break;
-					case '\a': printf("\t\\a\n"); break;
-					case '\b': printf("\t\\b\n"); break;
-					case '\f': printf("\t\\f\n"); break;
-					case '\n': printf("\t\\n\n"); break;
-					case '\t': printf("\t\\t\n"); break;
-					case '\r': printf("\t\\r\n"); break;
-					case '\v': printf("\t\\v\n"); break;
-					default: 
-						if (isprint(yylval.character))
-							printf("\t%c\n", yylval.character); 
-						else
-							printf("\t%03o\n", yylval.character); 
-						break;
-				}
-				break;
-			case STRING:
-				printf("STRING\t");
-				for (int i = 0; i < str_length; ++i)
-				{
-					c = *yylval.string++;
-					switch(c)
-					{
-						case '\0': printf("\\0"); break;
-						case '\'': printf("\\'"); break;
-						case '\"': printf("\\\""); break;
-						case '\?': printf("\?"); break;
-						case '\\': printf("\\\\"); break;
-						case '\a': printf("\\a"); break;
-						case '\b': printf("\\b"); break;
-						case '\f': printf("\\f"); break;
-						case '\n': printf("\\n"); break;
-						case '\t': printf("\\t"); break;
-						case '\r': printf("\\r"); break;
-						case '\v': printf("\\v"); break;
-						default: 
-							if (isprint(c))
-								printf("%c", c); 
-							else
-								printf("\\%o", c); 
-							break;
-					}
-				}
-				printf("\n");
-				break;
-			case IDENT:
-				printf("IDENT\t%s\n", yylval.string);
-				break;
-			case NUMBER:
-				printf("NUMBER");
-				switch (current_num_type)
-				{
-					case INTEGER:
-						printf("\tINTEGER\t%lld\tINT\n", yylval.integer.l_int);
-						break;
-					case LONG_INTEGER:
-						printf("\tINTEGER\t%lld\tLONG\n", yylval.integer.l_int);
-						break;
-					case LONGLONG_INTEGER:
-						printf("\tINTEGER\t%lld\tLONGLONG\n", yylval.integer.ll_int);
-						break;
-					case UNSIGNED_INTEGER:
-						printf("\tINTEGER\t%lld\tUNSIGNED,INT\n", yylval.integer.ul_int);
-						break;
-					case UNSIGNED_LONG_INTEGER:
-						printf("\tINTEGER\t%lld\tUNSIGNED,LONG\n", yylval.integer.ul_int);
-						break;
-					case UNSIGNED_LONGLONG_INTEGER:
-						printf("\tINTEGER\t%lld\tUNSIGNED,LONGLONG\n", yylval.integer.ull_int);
-						break;
-					case FLOAT_REAL:
-						printf("\tREAL\t%lg\tFLOAT\n", yylval.floating.flt);
-						break;
-					case DOUBLE_REAL:
-						printf("\tREAL\t%lg\tDOUBLE\n", yylval.floating.dbl);
-						break;
-					case LONG_DOUBLE_REAL:
-						printf("\tREAL\t%Lg\tLONGDOUBLE\n", yylval.floating.l_dbl);
-						break;	
-				}
-				break;
-			case AUTO:
-				printf("AUTO\n");
-				break;
-			case BREAK:
-				printf("BREAK\n");
-				break;
-			case CASE:
-				printf("CASE\n");
-				break;
-			case CHAR:
-				printf("CHAR\n");
-				break;
-			case CONST:
-				printf("CONST\n");
-				break;
-			case CONTINUE:
-				printf("CONTINUE\n");
-				break;
-			case DEFAULT:
-				printf("DEFAULT\n");
-				break;
-			case DO:
-				printf("BREAK\n");
-				break;
-			case DOUBLE:
-				printf("DOUBLE\n");
-				break;
-			case ELSE:
-				printf("ELSE\n");
-				break;
-			case ENUM:
-				printf("ENUM\n");
-				break;
-			case EXTERN:
-				printf("EXTERN\n");
-				break;
-			case FLOAT:
-				printf("FLOAT\n");
-				break;
-			case FOR:
-				printf("FOR\n");
-				break;
-			case GOTO:
-				printf("GOTO\n");
-				break;
-			case IF:
-				printf("IF\n");
-				break;
-			case INLINE:
-				printf("INLINE\n");
-				break;
-			case INT:
-				printf("INT\n");
-				break;
-			case LONG:
-				printf("LONG\n");
-				break;
-			case REGISTER:
-				printf("REGISTER\n");
-				break;
-			case RESTRICT:
-				printf("RESTRICT\n");
-				break;
-			case RETURN:
-				printf("RETURN\n");
-				break;
-			case SHORT:
-				printf("SHORT\n");
-				break;
-			case SIGNED:
-				printf("SIGNED\n");
-				break;
-			case SIZEOF:
-				printf("SIZEOF\n");
-				break;
-			case STATIC:
-				printf("STATIC\n");
-				break;
-			case STRUCT:
-				printf("STRUCT\n");
-				break;
-			case SWITCH:
-				printf("SWITCH\n");
-				break;
-			case TYPEDEF:
-				printf("TYPEDEF\n");
-				break;
-			case UNION:
-				printf("UNION\n");
-				break;
-			case UNSIGNED:
-				printf("UNSIGNED\n");
-				break;
-			case VOID:
-				printf("VOID\n");
-				break;
-			case VOLATILE:
-				printf("VOLATILE\n");
-				break;
-			case WHILE:
-				printf("WHILE\n");
-				break;
-			case _BOOL:
-				printf("_BOOL\n");
-				break;
-			case _COMPLEX:
-				printf("_COMPLEX\n");
-				break;
-			case _IMAGINARY:
-				printf("_IMAGINARY\n");
-				break;
-			case '[':
-				printf("[\n");
-				break;
-			case ']':
-				printf("]\n");
-				break;
-			case '(':
-				printf("(\n");
-				break;
-			case ')':
-				printf(")\n");
-				break;
-			case '{':
-				printf("{\n");
-				break;
-			case '}':
-				printf("}\n");
-				break;
-			case '.':
-				printf(".\n");
-				break;
-			case '&':
-				printf("&\n");
-				break;
-			case '*':
-				printf("*\n");
-				break;
-			case '+':
-				printf("+\n");
-				break;
-			case '-':
-				printf("-\n");
-				break;
-			case '~':
-				printf("~\n");
-				break;
-			case '!':
-				printf("!\n");
-				break;
-			case '/':
-				printf("/\n");
-				break;
-			case '%':
-				printf("%\n");
-				break;
-			case '<':
-				printf("<\n");
-				break;
-			case '>':
-				printf(">\n");
-				break;
-			case '^':
-				printf("^\n");
-				break;
-			case '|':
-				printf("|\n");
-				break;
-			case '?':
-				printf("?\n");
-				break;
-			case ':':
-				printf(":\n");
-				break;
-			case ';':
-				printf(";\n");
-				break;
-			case '=':
-				printf("=\n");
-				break;
-			case ',':
-				printf(",\n");
-				break;
-			case '#':
-				printf("#\n");
-				break;
-			case INDSEL:
-				printf("INDSEL\n");
-				break;
-			case PLUSPLUS:
-				printf("PLUSPLUS\n");
-				break;
-			case MINUSMINUS:
-				printf("MINUSMINUS\n");
-				break;
-			case SHL:
-				printf("SHL\n");
-				break;
-			case SHR:
-				printf("SHR\n");
-				break;
-			case LTEQ:
-				printf("LTEQ\n");
-				break;
-			case GTEQ:
-				printf("GTEQ\n");
-				break;
-			case EQEQ:
-				printf("EQEQ\n");
-				break;
-			case NOTEQ:
-				printf("NOTEQ\n");
-				break;
-			case LOGAND:
-				printf("LOGAND\n");
-				break;
-			case LOGOR:
-				printf("LOGOR\n");
-				break;
-			case ELLIPSIS:
-				printf("ELLIPSIS\n");
-				break;
-			case TIMESEQ:
-				printf("TIMESEQ\n");
-				break;
-			case DIVEQ:
-				printf("DIVEQ\n");
-				break;
-			case MODEQ:
-				printf("MODEQ\n");
-				break;
-			case PLUSEQ:
-				printf("PLUSEQ\n");
-				break;
-			case MINUSEQ:
-				printf("MINUSEQ\n");
-				break;
-			case SHLEQ:
-				printf("SHLEQ\n");
-				break;
-			case SHREQ:
-				printf("SHREQ\n");
-				break;
-			case ANDEQ:
-				printf("ANDEQ\n");
-				break;
-			case OREQ:
-				printf("OREQ\n");
-				break;
-			case XOREQ:
-				printf("XOREQ\n");
-				break;
-			default: 
-				printf("%s\n", yylval.string);
-				break;
-		}
-	}
-}
+/* int main() */
+/* { */
+    /* [> Token class returned from yylex() <] */
+    /* int t; */
+    /* char c; */
+    /* char buf[512]; */
+    /* while (t = yylex()) */
+    /* { */
+        /* printf("%s  %d  ", current_file, current_line); */
+        /* switch(t) */
+        /* { */
+            /* case CHARLIT: */
+/* [> \\[0'\"\?\\abfntrv] <] */
+                /* printf("CHARLIT"); */
+                /* switch(yylval.character) */
+                /* { */
+                    /* case '\0': printf("\t\\0\n"); break; */
+                    /* case '\'': printf("\t\\\'\n"); break; */
+                    /* case '\"': printf("\t\\\"\n"); break; */
+                    /* case '\?': printf("\t\\?\n"); break; */
+                    /* case '\\': printf("\t\\\\\n"); break; */
+                    /* case '\a': printf("\t\\a\n"); break; */
+                    /* case '\b': printf("\t\\b\n"); break; */
+                    /* case '\f': printf("\t\\f\n"); break; */
+                    /* case '\n': printf("\t\\n\n"); break; */
+                    /* case '\t': printf("\t\\t\n"); break; */
+                    /* case '\r': printf("\t\\r\n"); break; */
+                    /* case '\v': printf("\t\\v\n"); break; */
+                    /* default:  */
+                        /* if (isprint(yylval.character)) */
+                            /* printf("\t%c\n", yylval.character);  */
+                        /* else */
+                            /* printf("\t%03o\n", yylval.character);  */
+                        /* break; */
+                /* } */
+                /* break; */
+            /* case STRING: */
+                /* printf("STRING\t"); */
+                /* for (int i = 0; i < str_length; ++i) */
+                /* { */
+                    /* c = *yylval.string++; */
+                    /* switch(c) */
+                    /* { */
+                        /* case '\0': printf("\\0"); break; */
+                        /* case '\'': printf("\\'"); break; */
+                        /* case '\"': printf("\\\""); break; */
+                        /* case '\?': printf("\?"); break; */
+                        /* case '\\': printf("\\\\"); break; */
+                        /* case '\a': printf("\\a"); break; */
+                        /* case '\b': printf("\\b"); break; */
+                        /* case '\f': printf("\\f"); break; */
+                        /* case '\n': printf("\\n"); break; */
+                        /* case '\t': printf("\\t"); break; */
+                        /* case '\r': printf("\\r"); break; */
+                        /* case '\v': printf("\\v"); break; */
+                        /* default:  */
+                            /* if (isprint(c)) */
+                                /* printf("%c", c);  */
+                            /* else */
+                                /* printf("\\%03o", c);  */
+                            /* break; */
+                    /* } */
+                /* } */
+                /* printf("\n"); */
+                /* break; */
+            /* case IDENT: */
+                /* printf("IDENT\t%s\n", yylval.string); */
+                /* break; */
+            /* case NUMBER: */
+                /* printf("NUMBER"); */
+                /* switch (current_num_type) */
+                /* { */
+                    /* case INTEGER: */
+                        /* printf("\tINTEGER\t%lld\tINT\n", yylval.integer.l_int); */
+                        /* break; */
+                    /* case LONG_INTEGER: */
+                        /* printf("\tINTEGER\t%lld\tLONG\n", yylval.integer.l_int); */
+                        /* break; */
+                    /* case LONGLONG_INTEGER: */
+                        /* printf("\tINTEGER\t%lld\tLONGLONG\n", yylval.integer.ll_int); */
+                        /* break; */
+                    /* case UNSIGNED_INTEGER: */
+                        /* printf("\tINTEGER\t%lld\tUNSIGNED,INT\n", yylval.integer.ul_int); */
+                        /* break; */
+                    /* case UNSIGNED_LONG_INTEGER: */
+                        /* printf("\tINTEGER\t%lld\tUNSIGNED,LONG\n", yylval.integer.ul_int); */
+                        /* break; */
+                    /* case UNSIGNED_LONGLONG_INTEGER: */
+                        /* printf("\tINTEGER\t%lld\tUNSIGNED,LONGLONG\n", yylval.integer.ull_int); */
+                        /* break; */
+                    /* case FLOAT_REAL: */
+                        /* printf("\tREAL\t%lg\tFLOAT\n", yylval.floating.flt); */
+                        /* break; */
+                    /* case DOUBLE_REAL: */
+                        /* printf("\tREAL\t%lg\tDOUBLE\n", yylval.floating.dbl); */
+                        /* break; */
+                    /* case LONG_DOUBLE_REAL: */
+                        /* printf("\tREAL\t%Lg\tLONGDOUBLE\n", yylval.floating.l_dbl); */
+                        /* break;   */
+                /* } */
+                /* break; */
+            /* case AUTO: */
+                /* printf("AUTO\n"); */
+                /* break; */
+            /* case BREAK: */
+                /* printf("BREAK\n"); */
+                /* break; */
+            /* case CASE: */
+                /* printf("CASE\n"); */
+                /* break; */
+            /* case CHAR: */
+                /* printf("CHAR\n"); */
+                /* break; */
+            /* case CONST: */
+                /* printf("CONST\n"); */
+                /* break; */
+            /* case CONTINUE: */
+                /* printf("CONTINUE\n"); */
+                /* break; */
+            /* case DEFAULT: */
+                /* printf("DEFAULT\n"); */
+                /* break; */
+            /* case DO: */
+                /* printf("BREAK\n"); */
+                /* break; */
+            /* case DOUBLE: */
+                /* printf("DOUBLE\n"); */
+                /* break; */
+            /* case ELSE: */
+                /* printf("ELSE\n"); */
+                /* break; */
+            /* case ENUM: */
+                /* printf("ENUM\n"); */
+                /* break; */
+            /* case EXTERN: */
+                /* printf("EXTERN\n"); */
+                /* break; */
+            /* case FLOAT: */
+                /* printf("FLOAT\n"); */
+                /* break; */
+            /* case FOR: */
+                /* printf("FOR\n"); */
+                /* break; */
+            /* case GOTO: */
+                /* printf("GOTO\n"); */
+                /* break; */
+            /* case IF: */
+                /* printf("IF\n"); */
+                /* break; */
+            /* case INLINE: */
+                /* printf("INLINE\n"); */
+                /* break; */
+            /* case INT: */
+                /* printf("INT\n"); */
+                /* break; */
+            /* case LONG: */
+                /* printf("LONG\n"); */
+                /* break; */
+            /* case REGISTER: */
+                /* printf("REGISTER\n"); */
+                /* break; */
+            /* case RESTRICT: */
+                /* printf("RESTRICT\n"); */
+                /* break; */
+            /* case RETURN: */
+                /* printf("RETURN\n"); */
+                /* break; */
+            /* case SHORT: */
+                /* printf("SHORT\n"); */
+                /* break; */
+            /* case SIGNED: */
+                /* printf("SIGNED\n"); */
+                /* break; */
+            /* case SIZEOF: */
+                /* printf("SIZEOF\n"); */
+                /* break; */
+            /* case STATIC: */
+                /* printf("STATIC\n"); */
+                /* break; */
+            /* case STRUCT: */
+                /* printf("STRUCT\n"); */
+                /* break; */
+            /* case SWITCH: */
+                /* printf("SWITCH\n"); */
+                /* break; */
+            /* case TYPEDEF: */
+                /* printf("TYPEDEF\n"); */
+                /* break; */
+            /* case UNION: */
+                /* printf("UNION\n"); */
+                /* break; */
+            /* case UNSIGNED: */
+                /* printf("UNSIGNED\n"); */
+                /* break; */
+            /* case VOID: */
+                /* printf("VOID\n"); */
+                /* break; */
+            /* case VOLATILE: */
+                /* printf("VOLATILE\n"); */
+                /* break; */
+            /* case WHILE: */
+                /* printf("WHILE\n"); */
+                /* break; */
+            /* case _BOOL: */
+                /* printf("_BOOL\n"); */
+                /* break; */
+            /* case _COMPLEX: */
+                /* printf("_COMPLEX\n"); */
+                /* break; */
+            /* case _IMAGINARY: */
+                /* printf("_IMAGINARY\n"); */
+                /* break; */
+            /* case '[': */
+                /* printf("[\n"); */
+                /* break; */
+            /* case ']': */
+                /* printf("]\n"); */
+                /* break; */
+            /* case '(': */
+                /* printf("(\n"); */
+                /* break; */
+            /* case ')': */
+                /* printf(")\n"); */
+                /* break; */
+            /* case '{': */
+                /* printf("{\n"); */
+                /* break; */
+            /* case '}': */
+                /* printf("}\n"); */
+                /* break; */
+            /* case '.': */
+                /* printf(".\n"); */
+                /* break; */
+            /* case '&': */
+                /* printf("&\n"); */
+                /* break; */
+            /* case '*': */
+                /* printf("*\n"); */
+                /* break; */
+            /* case '+': */
+                /* printf("+\n"); */
+                /* break; */
+            /* case '-': */
+                /* printf("-\n"); */
+                /* break; */
+            /* case '~': */
+                /* printf("~\n"); */
+                /* break; */
+            /* case '!': */
+                /* printf("!\n"); */
+                /* break; */
+            /* case '/': */
+                /* printf("/\n"); */
+                /* break; */
+            /* case '%': */
+                /* printf("%\n"); */
+                /* break; */
+            /* case '<': */
+                /* printf("<\n"); */
+                /* break; */
+            /* case '>': */
+                /* printf(">\n"); */
+                /* break; */
+            /* case '^': */
+                /* printf("^\n"); */
+                /* break; */
+            /* case '|': */
+                /* printf("|\n"); */
+                /* break; */
+            /* case '?': */
+                /* printf("?\n"); */
+                /* break; */
+            /* case ':': */
+                /* printf(":\n"); */
+                /* break; */
+            /* case ';': */
+                /* printf(";\n"); */
+                /* break; */
+            /* case '=': */
+                /* printf("=\n"); */
+                /* break; */
+            /* case ',': */
+                /* printf(",\n"); */
+                /* break; */
+            /* case '#': */
+                /* printf("#\n"); */
+                /* break; */
+            /* case INDSEL: */
+                /* printf("INDSEL\n"); */
+                /* break; */
+            /* case PLUSPLUS: */
+                /* printf("PLUSPLUS\n"); */
+                /* break; */
+            /* case MINUSMINUS: */
+                /* printf("MINUSMINUS\n"); */
+                /* break; */
+            /* case SHL: */
+                /* printf("SHL\n"); */
+                /* break; */
+            /* case SHR: */
+                /* printf("SHR\n"); */
+                /* break; */
+            /* case LTEQ: */
+                /* printf("LTEQ\n"); */
+                /* break; */
+            /* case GTEQ: */
+                /* printf("GTEQ\n"); */
+                /* break; */
+            /* case EQEQ: */
+                /* printf("EQEQ\n"); */
+                /* break; */
+            /* case NOTEQ: */
+                /* printf("NOTEQ\n"); */
+                /* break; */
+            /* case LOGAND: */
+                /* printf("LOGAND\n"); */
+                /* break; */
+            /* case LOGOR: */
+                /* printf("LOGOR\n"); */
+                /* break; */
+            /* case ELLIPSIS: */
+                /* printf("ELLIPSIS\n"); */
+                /* break; */
+            /* case TIMESEQ: */
+                /* printf("TIMESEQ\n"); */
+                /* break; */
+            /* case DIVEQ: */
+                /* printf("DIVEQ\n"); */
+                /* break; */
+            /* case MODEQ: */
+                /* printf("MODEQ\n"); */
+                /* break; */
+            /* case PLUSEQ: */
+                /* printf("PLUSEQ\n"); */
+                /* break; */
+            /* case MINUSEQ: */
+                /* printf("MINUSEQ\n"); */
+                /* break; */
+            /* case SHLEQ: */
+                /* printf("SHLEQ\n"); */
+                /* break; */
+            /* case SHREQ: */
+                /* printf("SHREQ\n"); */
+                /* break; */
+            /* case ANDEQ: */
+                /* printf("ANDEQ\n"); */
+                /* break; */
+            /* case OREQ: */
+                /* printf("OREQ\n"); */
+                /* break; */
+            /* case XOREQ: */
+                /* printf("XOREQ\n"); */
+                /* break; */
+            /* default:  */
+                /* printf("%s\n", yylval.string); */
+                /* break; */
+        /* } */
+    /* } */
+ /* } */
 
 

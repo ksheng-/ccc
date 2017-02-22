@@ -1,21 +1,14 @@
-flextest: lex.yy.c
-	gcc -g -o flextest lex.yy.c
+all: parser
 
-lex.yy.c: flextest.l
-	flex flextest.l
+parser.tab.c parser.tab.h: parser.y ptypes.h
+	bison -d parser.y
 
-chars:
-	gcc -E ltests/chars.c | ./flextest
+lex.yy.c: lexer.l parser.tab.h
+	flex lexer.l
 
-kw:
-	gcc -E ltests/kw.c | ./flextest
+parser: lex.yy.c parser.tab.c parser.tab.h
+	gcc -g -o parser parser.tab.c lex.yy.c
 
-num:
-	gcc -E ltests/num.c | ./flextest
-
-op:
-	gcc -E ltests/op.c | ./flextest
-
-run:
-	gcc -E ltests/*.c | ./flextest >fltest.out 2>fltest.err
+clean:
+	rm parser parser.tab.c lex.yy.c parser.tab.h
 
