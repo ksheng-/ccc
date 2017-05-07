@@ -6,52 +6,15 @@
 #include <string.h>
 #include <ctype.h>
 #include "ptypes.h"
+#include "ast.h"
 #include "parser.tab.h"
 /* #include "tokens-manual.h" // Enumerated token classes */
 // #include "parser.h"
 /* Token semantic value */
 
-
-/* enum num_types */
-/* { */
-    /* INTEGER, */
-    /* LONG_INTEGER, */
-    /* LONGLONG_INTEGER, */
-    /* UNSIGNED_INTEGER, */
-    /* UNSIGNED_LONG_INTEGER, */
-    /* UNSIGNED_LONGLONG_INTEGER, */
-    /* FLOAT_REAL, */
-    /* DOUBLE_REAL, */
-    /* LONG_DOUBLE_REAL */
-/* } num_types; */
-
-/* struct number  */
-/* { */
-    /* union value */
-    /* { */
-        /* long l_int; */
-        /* long long ll_int; */
-        /* unsigned long ul_int; */
-        /* unsigned long long ull_int; */
-        /* double dbl; */
-        /* long double l_dbl; */
-        /* float flt; */
-    /* } value; */
-    /* int type; */
-/* } number; */
-/* typedef struct number number; */
-
-/* typedef union */
-/* { */
-    /* char *string; */
-    /* char character; */
-    /* number number; */
-/* } YYSTYPE; */
-/* YYSTYPE yylval; */
-
 /* Error message or linemarkers */
-int current_line = 1;
-char current_file[FILENAME_MAX];
+extern int current_line;
+extern char current_file[FILENAME_MAX];
 int str_length;
 
 
