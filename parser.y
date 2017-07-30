@@ -49,86 +49,110 @@ astnode *ast_tail;
 %left INDSEL PLUSPLUS MINUSMINUS '~' '!'
 
 %left '(' ')'
+%left UNARY
 
 %left IF
 %left ELSE
 
-%type<node> block_item
-%type<node> block_item_list
-%type<node> statement
-%type<node> compound_statement
-%type<node> selection_statement
-%type<node> labeled_statement
-%type<node> jump_statement
-%type<node> iteration_statement
-%type<node> expression
-%type<node> argument_expression_list
-%type<node> struct_or_union
-%type<node> struct_or_union_specifier
-%type<node> storage_class_specifier
-%type<node> type_qualifier
-%type<node> type_qualifier_list
-%type<node> pointer
 %type<node> declaration_specifiers
 %type<node> type_specifier
 %type<node> direct_declarator
 %type<node> init_declarator
 %type<node> declarator
+%type<node> storage_class_specifier
+%type<node> type_qualifier
+%type<node> type_qualifier_list
+%type<node> pointer
+%type<node> struct_or_union
+%type<node> block_item
+%type<node> block_item_list
+%type<node> expression
+%type<node> primary_expression
+%type<node> postfix_expression
+%type<node> compound_statement
+%type<node> unary_operator
+%type<node> unary_expression
+%type<node> cast_expression
+%type<node> multiplicative_expression
+%type<node> additive_expression
+%type<node> shift_expression
+%type<node> relational_expression
+%type<node> equality_expression
+%type<node> and_expression
+%type<node> exclusive_or_expression
+%type<node> inclusive_or_expression
+%type<node> logical_and_expression
+%type<node> logical_or_expression
+%type<node> conditional_expression
+%type<node> assignment_expression
+%type<node> assignment_operator
+%type<node> statement
+%type<node> labeled_statement
+%type<node> selection_statement
+%type<node> iteration_statement
 
 %start translation_unit
 
 %%
-/*** External definitions *****************************************************/
-translation_unit    : external_declaration
-                    | translation_unit external_declaration
-                    ;
 
-external_declaration : function_definition
-                    | declaration
-                    ;
-
-function_definition : declaration_specifiers declarator compound_statement
-                      {
-                        // TODO link symbol table to declarator
-                        printf("FUNCTION");
-                        // insert_astnode($1, ast_tail); 
-                        print_ast(ast_head, 0);
-                      }
-                    | declaration_specifiers declarator declaration_list compound_statement
-                    | declarator declaration_list compound_statement
-                    | declarator compound_statement
-                    ;
-
-declaration_list    : declaration
-                    | declaration_list declaration
-                    ;
 
 /*** Expressions **************************************************************/
 primary_expression  : IDENT
                       {
-                        $$ = find_sym(&scopes, NS_DEFAULT, *$1);
+                        $$ = find_sym(&scopes, NS_DEFAULT, $1);
                       }
                     | NUMBER
                       {
                         $$ = new_astnode(AST_NUMBER);
-                        $$->astnode_number.value = $1;
+                        $$->astnode_number.number = $1;
                       }
                     | CHARLIT
+                      {
+                        $$ = new_astnode(AST_CHARLIT);
+                        $$->astnode_charlit.ch = $1;
+                      }
                     | STRING
+                      {
+                        $$ = new_astnode(AST_STRING);
+                        $$->astnode_string.string = $1;
+                      }
                     | '(' expression ')'
+                      {
+                        $$ = $2;
+                      }
                     ;
 
 postfix_expression  : primary_expression
                     | postfix_expression '[' expression ']'
+                      {
+                        astnode *index = new_astnode(AST_BINOP);
+                        index->astnode_binop.left = $1;
+                        index->astnode_binop.right = $3; 
+                        index->astnode_binop.op = (int) '+';
+                        
+                        $$ = new_astnode(AST_DEREF);
+                        insert_astnode(index, $$); 
+                      }
                     | postfix_expression '(' ')'
-                    | postfix_expression '(' argument_expression_list ')'
                       {
                         $$ = new_astnode(AST_CALL);
+                        $$->astnode_call.stab = $1;
                       }
+                    | postfix_expression '(' argument_expression_list ')'
                     | postfix_expression '.' IDENT
                     | postfix_expression INDSEL IDENT
                     | postfix_expression PLUSPLUS
+                      {
+                        $$  = new_astnode(AST_OP);
+                        $$->astnode_op.op = OP_POSTINC;
+                        insert_astnode_op($$, $1);
+                      }
                     | postfix_expression MINUSMINUS
+                      {
+                        $$ = new_astnode(AST_OP);
+                        $$->astnode_op.op = OP_POSTDEC;
+                        insert_astnode_op($$, $1);
+                      }
                     ;
 
 argument_expression_list : assignment_expression
@@ -137,18 +161,55 @@ argument_expression_list : assignment_expression
 
 unary_expression    : postfix_expression
                     | PLUSPLUS unary_expression
+                      {
+                        $$ = new_astnode(AST_OP);
+                        $$->astnode_op.op = OP_PREINC;
+                        insert_astnode_op($$, $2);
+                      } 
                     | MINUSMINUS unary_expression
+                      {
+                        $$ = new_astnode(AST_OP);
+                        $$->astnode_op.op = OP_PREDEC;
+                        insert_astnode_op($$, $2);
+                      } 
                     | unary_operator cast_expression
+                      {
+                        insert_astnode_op($$, $2);
+                      }
                     | SIZEOF unary_expression
                     | SIZEOF '(' type_name ')'
                     ;
 
-unary_operator      : '&'
+unary_operator      : '&' %prec UNARY
+                      {
+                        $$ = new_astnode(AST_OP);
+                        $$->astnode_op.op = OP_ADDROF;
+                      }
                     | '*'
+                      {
+                        $$ = new_astnode(AST_OP);
+                        $$->astnode_op.op = OP_DEREF;
+                      }
                     | '+'
+                      {
+                        $$ = new_astnode(AST_OP);
+                        $$->astnode_op.op = OP_POS;
+                      }
                     | '-'
+                      {
+                        $$ = new_astnode(AST_OP);
+                        $$->astnode_op.op = OP_NEG;
+                      }
                     | '~'
+                      {
+                        $$ = new_astnode(AST_OP);
+                        $$->astnode_op.op = OP_NOT;
+                      }
                     | '!'
+                      {
+                        $$ = new_astnode(AST_OP);
+                        $$->astnode_op.op = OP_LOGNOT;
+                      }
                     ;
 
 cast_expression     : unary_expression
@@ -157,50 +218,158 @@ cast_expression     : unary_expression
 
 multiplicative_expression : cast_expression
                     | multiplicative_expression '*' cast_expression
+                      {
+                        $$ = new_astnode(AST_BINOP);
+                        $$->astnode_binop.op = OP_MULT;
+                        $$->astnode_binop.left = $1;
+                        $$->astnode_binop.right = $3;
+                      }
                     | multiplicative_expression '/' cast_expression
+                      {
+                        $$ = new_astnode(AST_BINOP);
+                        $$->astnode_binop.op = OP_DIV;
+                        $$->astnode_binop.left = $1;
+                        $$->astnode_binop.right = $3;
+                      }
                     | multiplicative_expression '%' cast_expression
+                      {
+                        $$ = new_astnode(AST_BINOP);
+                        $$->astnode_binop.op = OP_MOD;
+                        $$->astnode_binop.left = $1;
+                        $$->astnode_binop.right = $3;
+                      }
                     ;
 
 additive_expression : multiplicative_expression
                     | additive_expression '+' multiplicative_expression
+                      {
+                        $$ = new_astnode(AST_BINOP);
+                        $$->astnode_binop.op = OP_ADD;
+                        $$->astnode_binop.left = $1;
+                        $$->astnode_binop.right = $3;
+                      }
                     | additive_expression '-' multiplicative_expression
+                      {
+                        $$ = new_astnode(AST_BINOP);
+                        $$->astnode_binop.op = OP_SUB;
+                        $$->astnode_binop.left = $1;
+                        $$->astnode_binop.right = $3;
+                      }
                     ;
 
 shift_expression    : additive_expression
                     | shift_expression SHL additive_expression
+                      {
+                        $$ = new_astnode(AST_BINOP);
+                        $$->astnode_binop.op = OP_SHL;
+                        $$->astnode_binop.left = $1;
+                        $$->astnode_binop.right = $3;
+                      }
                     | shift_expression SHR additive_expression
+                      {
+                        $$ = new_astnode(AST_BINOP);
+                        $$->astnode_binop.op = OP_SHR;
+                        $$->astnode_binop.left = $1;
+                        $$->astnode_binop.right = $3;
+                      }
                     ;
 
 relational_expression : shift_expression
                     | relational_expression '<' shift_expression
+                      {
+                        $$ = new_astnode(AST_BINOP);
+                        $$->astnode_binop.op = OP_LT;
+                        $$->astnode_binop.left = $1;
+                        $$->astnode_binop.right = $3;
+                      }
                     | relational_expression '>' shift_expression
+                      {
+                        $$ = new_astnode(AST_BINOP);
+                        $$->astnode_binop.op = OP_GT;
+                        $$->astnode_binop.left = $1;
+                        $$->astnode_binop.right = $3;
+                      }
                     | relational_expression LTEQ shift_expression
+                      {
+                        $$ = new_astnode(AST_BINOP);
+                        $$->astnode_binop.op = OP_LTEQ;
+                        $$->astnode_binop.left = $1;
+                        $$->astnode_binop.right = $3;
+                      }
                     | relational_expression GTEQ shift_expression
+                      {
+                        $$ = new_astnode(AST_BINOP);
+                        $$->astnode_binop.op = OP_GTEQ;
+                        $$->astnode_binop.left = $1;
+                        $$->astnode_binop.right = $3;
+                      }
                     ;
 
 equality_expression : relational_expression
                     | equality_expression EQEQ relational_expression
+                      {
+                        $$ = new_astnode(AST_BINOP);
+                        $$->astnode_binop.op = OP_EQEQ;
+                        $$->astnode_binop.left = $1;
+                        $$->astnode_binop.right = $3;
+                      }
                     | equality_expression NOTEQ relational_expression
+                      {
+                        $$ = new_astnode(AST_BINOP);
+                        $$->astnode_binop.op = OP_NOTEQ;
+                        $$->astnode_binop.left = $1;
+                        $$->astnode_binop.right = $3;
+                      }
                     ;
 
 and_expression      : equality_expression
                     | and_expression '&' equality_expression
+                      {
+                        $$ = new_astnode(AST_BINOP);
+                        $$->astnode_binop.op = OP_AND;
+                        $$->astnode_binop.left = $1;
+                        $$->astnode_binop.right = $3;
+                      }
                     ;
 
 exclusive_or_expression : and_expression
                     | exclusive_or_expression '^' and_expression
+                      {
+                        $$ = new_astnode(AST_BINOP);
+                        $$->astnode_binop.op = OP_XOR;
+                        $$->astnode_binop.left = $1;
+                        $$->astnode_binop.right = $3;
+                      }
                     ;
 
 inclusive_or_expression : exclusive_or_expression
                     | inclusive_or_expression '|' exclusive_or_expression
+                      {
+                        $$ = new_astnode(AST_BINOP);
+                        $$->astnode_binop.op = OP_OR;
+                        $$->astnode_binop.left = $1;
+                        $$->astnode_binop.right = $3;
+                      }
                     ;
 
 logical_and_expression : inclusive_or_expression
                     | logical_and_expression LOGAND inclusive_or_expression
+                      {
+                        $$ = new_astnode(AST_BINOP);
+                        $$->astnode_binop.op = OP_LOGAND;
+                        $$->astnode_binop.left = $1;
+                        $$->astnode_binop.right = $3;
+                      }
                     ;
 
 logical_or_expression : logical_and_expression
                     | logical_or_expression LOGOR logical_and_expression
+                      {
+                        $$ = new_astnode(AST_BINOP);
+                        $$->astnode_binop.op = OP_LOGOR;
+                        $$->astnode_binop.left = $1;
+                        $$->astnode_binop.right = $3;
+                      }
                     ;
 
 conditional_expression : logical_or_expression
@@ -209,22 +378,82 @@ conditional_expression : logical_or_expression
 
 assignment_expression : conditional_expression
                     | unary_expression assignment_operator assignment_expression
+                      {
+                        $$ = new_astnode(AST_BINOP);
+                        $$->astnode_binop.op = OP_EQ;
+                        $$->astnode_binop.left = $1;
+                        $$->astnode_binop.right = $3;
+                      }
                     ;
 
 assignment_operator : '='
                     | TIMESEQ
+                      {
+                        $$ = new_astnode(AST_BINOP);
+                        $$->astnode_binop.op = OP_MULT;
+                        $$->astnode_binop.left = $<node>0;
+                      }
                     | DIVEQ
+                      {
+                        $$ = new_astnode(AST_BINOP);
+                        $$->astnode_binop.op = OP_DIV;
+                        $$->astnode_binop.left = $<node>0;
+                      }
                     | MODEQ
+                      {
+                        $$ = new_astnode(AST_BINOP);
+                        $$->astnode_binop.op = OP_MOD;
+                        $$->astnode_binop.left = $<node>0;
+                      }
                     | PLUSEQ
+                      {
+                        $$ = new_astnode(AST_BINOP);
+                        $$->astnode_binop.op = OP_ADD;
+                        $$->astnode_binop.left = $<node>0;
+                      }
                     | MINUSEQ
+                      {
+                        $$ = new_astnode(AST_BINOP);
+                        $$->astnode_binop.op = OP_SUB;
+                        $$->astnode_binop.left = $<node>0;
+                      }
                     | SHLEQ
+                      {
+                        $$ = new_astnode(AST_BINOP);
+                        $$->astnode_binop.op = OP_SHL;
+                        $$->astnode_binop.left = $<node>0;
+                      }
                     | SHREQ
+                      {
+                        $$ = new_astnode(AST_BINOP);
+                        $$->astnode_binop.op = OP_SHR;
+                        $$->astnode_binop.left = $<node>0;
+                      }
                     | ANDEQ
+                      {
+                        $$ = new_astnode(AST_BINOP);
+                        $$->astnode_binop.op = OP_AND;
+                        $$->astnode_binop.left = $<node>0;
+                      }
                     | XOREQ
+                      {
+                        $$ = new_astnode(AST_BINOP);
+                        $$->astnode_binop.op = OP_XOR;
+                        $$->astnode_binop.left = $<node>0;
+                      }
                     | OREQ
+                      {
+                        $$ = new_astnode(AST_BINOP);
+                        $$->astnode_binop.op = OP_OR;
+                        $$->astnode_binop.left = $<node>0;
+                      }
+
                     ;
 
 expression          : assignment_expression
+                      {
+                        print_ast($1, 0);
+                      }
                     | expression ',' assignment_expression
                     ;
 
@@ -316,7 +545,7 @@ init_declarator     : declarator
                     | declarator '=' initializer
                     ;
 
-storage_class_specifier : TYPEDEF
+storage_class_specifier : TYPEDEF {$$ = new_astnode(AST_TYPEDEF_NAME);}
                     | EXTERN    {$$ = new_astnode(AST_VAR); $$->astnode_var.stg = EXTERN;}
                     | STATIC    {$$ = new_astnode(AST_VAR); $$->astnode_var.stg = STATIC;}
                     | AUTO      {$$ = new_astnode(AST_VAR); $$->astnode_var.stg = AUTO;}
@@ -562,6 +791,10 @@ statement           : labeled_statement
                     ;
 
 labeled_statement   : IDENT ':' statement
+                      {
+                        $$ = $3;
+                        insert_entry(&scopes, 0, NS_LABEL, $1,  $3);
+                      }
                     | CASE constant_expression ':' statement
                     | DEFAULT ':' statement
                     ;
@@ -586,12 +819,34 @@ expression_statement : ';'
                     ;
 
 selection_statement : IF '(' expression ')' statement                %prec IF
+                      {
+                        $$ = new_astnode(AST_IF);
+                        $$->astnode_if.test = $3;
+                        $$->astnode_if.true = $5;
+                        $$->astnode_if.false = 0;
+                      }
                     | IF '(' expression ')' statement ELSE statement %prec ELSE
+                      {
+                        $$ = new_astnode(AST_IF);
+                        $$->astnode_if.test = $3;
+                        $$->astnode_if.true = $5;
+                        $$->astnode_if.false = $7;
+                      }
                     | SWITCH '(' expression ')' statement
                     ;
 
 iteration_statement : WHILE '(' expression ')' statement
+                      {
+                        $$ = new_astnode(AST_WHILE);
+                        $$->astnode_while.test = $3;
+                        $$->astnode_while.body = $5;
+                      }
                     | DO statement WHILE '(' expression ')' ';'
+                      {
+                        $$ = new_astnode(AST_DOWHILE);
+                        $$->astnode_while.test = $5;
+                        $$->astnode_while.body = $2;
+                      }
                     | FOR '(' expression_statement expression_statement ')' statement
                     | FOR '(' declaration expression_statement ')' statement
                     | FOR '(' declaration expression_statement expression ')' statement
@@ -604,6 +859,30 @@ jump_statement      : GOTO IDENT ';'
                     | RETURN expression ';'
                     ;
 
+/*** External definitions *****************************************************/
+translation_unit    : external_declaration
+                    | translation_unit external_declaration
+                    ;
+
+external_declaration : function_definition
+                    | declaration
+                    ;
+
+function_definition : declaration_specifiers declarator compound_statement
+                      {
+                        // insert_astnode($1, ast_tail); 
+                        print_ast(ast_head, 0);
+                        astnode *node = new_astnode(AST_FUNC);
+                        node->astnode_func.rtype = $1;
+                      }
+                    | declaration_specifiers declarator declaration_list compound_statement
+                    | declarator declaration_list compound_statement
+                    | declarator compound_statement
+                    ;
+
+declaration_list    : declaration
+                    | declaration_list declaration
+                    ;
 
 %%
 

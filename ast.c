@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "ast.h"
+#include "ptypes.h"
 
 void transform_typespecs(astnode *node)
 {
@@ -90,6 +91,7 @@ astnode *new_astnode(int type)
 void insert_astnode(astnode *node, astnode *pos)
 {
     astnode *tmp;
+
     switch (*(int *) pos)
     {
         case AST_NULL:
@@ -108,41 +110,13 @@ void insert_astnode(astnode *node, astnode *pos)
             tmp = pos->astnode_func.next;
             pos->astnode_func.next = node;
             break;
-        case AST_STRUCT_TAG:
-            break;
-        case AST_UNION_TAG:
-            break;
-        case AST_ENUM_TAG:
-            break;
-        case AST_ENUM_CONST:
-            break;
-        case AST_MEMBER:
-            break;
-        case AST_LABEL:
-            break;
-        case AST_TYPEDEF_NAME:
-            break;
-        case AST_NUM:
-            break;
         case AST_TYPESPECS:
             tmp = pos->astnode_typespecs.next;
             pos->astnode_typespecs.next = node;
             break;
-        case AST_PTR:
-            break;
         case AST_QUALIF:
             tmp = pos->astnode_qualif.next;
             pos->astnode_qualif.next = node;
-            break;
-        case AST_ARRAY:
-            break;
-        case AST_IF:
-            break;
-        case AST_IFELSE:
-            break;
-        case AST_GOTO:
-            break;
-        case AST_WHILE:
             break;
     }
     
@@ -160,42 +134,53 @@ void insert_astnode(astnode *node, astnode *pos)
         case AST_FUNC:
             node->astnode_func.next = tmp;
             break;
-        case AST_STRUCT_TAG:
-            break;
-        case AST_UNION_TAG:
-            break;
-        case AST_ENUM_TAG:
-            break;
-        case AST_ENUM_CONST:
-            break;
-        case AST_MEMBER:
-            break;
-        case AST_LABEL:
-            break;
-        case AST_TYPEDEF_NAME:
-            break;
-        case AST_NUM:
-            break;
         case AST_TYPESPECS:
             node->astnode_typespecs.next = tmp;
-            break;
-        case AST_PTR:
             break;
         case AST_QUALIF:
             node->astnode_qualif.next = tmp;
             break;
-        case AST_ARRAY:
+    }
+
+}
+
+void insert_astnode_op(astnode *op, astnode *node)
+{
+    astnode *tmp;
+    if (node == NULL)
+    {
+        return;
+    }
+
+    switch (*(int *) node)
+    {
+        case AST_VAR:
+            tmp = node->astnode_var.prev;
+            node->astnode_var.prev = op;
             break;
-        case AST_IF:
+        case AST_NUMBER:
+            tmp = node->astnode_number.prev;
+            node->astnode_number.prev = op;
             break;
-        case AST_IFELSE:
+        case AST_CHARLIT:
+            tmp = node->astnode_charlit.prev;
+            node->astnode_charlit.prev = op;
             break;
-        case AST_GOTO:
-            break;
-        case AST_WHILE:
+        case AST_STRING:
+            tmp = node->astnode_string.prev;
+            node->astnode_string.prev = op;
             break;
     }
 
+    switch (*(int *) op)
+    {
+        case AST_OP:
+            op->astnode_op.next = tmp;
+            break;
+        case AST_BINOP:
+            op->astnode_binop.left = tmp;
+            break;
+    }
 }
 
 void print_ast(astnode *root, int level)
@@ -220,21 +205,8 @@ void print_ast(astnode *root, int level)
             fprintf(stderr, "%s defined at %s:%d as a function with return type:\n", root->astnode_func.name, current_file, current_line);
             print_ast(root->astnode_func.next, level+1);
             break;
-        case AST_STRUCT_TAG:
-            break;
-        case AST_UNION_TAG:
-            break;
-        case AST_ENUM_TAG:
-            break;
-        case AST_ENUM_CONST:
-            break;
-        case AST_MEMBER:
-            break;
-        case AST_LABEL:
-            break;
-        case AST_TYPEDEF_NAME:
-            break;
-        case AST_NUM:
+        case AST_NUMBER:
+            fprintf(stderr, "NUMBER: %s");
             break;
         case AST_TYPESPECS:
             if (root->astnode_typespecs.is_const)
@@ -278,13 +250,125 @@ void print_ast(astnode *root, int level)
             break;
         case AST_ARRAY:
             break;
-        case AST_IF:
+        case AST_OP:
+            switch (root->astnode_op.op)
+            {
+                case OP_PREINC:
+                    fprintf(stderr, "unary op: pre increment\n");
+                    break;
+                case OP_POSTINC:
+                    fprintf(stderr, "unary op: post increment\n");
+                    break;
+                case OP_PREDEC:
+                    fprintf(stderr, "unary op: pre decrement\n");
+                    break;
+                case OP_POSTDEC:
+                    fprintf(stderr, "unary op: post decrement\n");
+                    break;
+                case OP_ADDROF:
+                    fprintf(stderr, "unary op: address of\n");
+                    break;
+                case OP_DEREF:
+                    fprintf(stderr, "unary op: dereference\n");
+                    break;
+                case OP_POS:
+                    fprintf(stderr, "unary op: positive\n");
+                    break;
+                case OP_NEG:
+                    fprintf(stderr, "unary op: negative\n");
+                    break;
+                case OP_NOT:
+                    fprintf(stderr, "unary op: bitwise not\n");
+                    break;
+                case OP_LOGNOT:
+                    fprintf(stderr, "unary op: logical not\n");
+                    break;
+            }
             break;
-        case AST_IFELSE:
+        case AST_BINOP:
+            switch (root->astnode_op.op)
+            {
+                case OP_SHL:
+                    fprintf(stderr, "binary op: shift left\n");
+                    
+                    break;
+                case OP_SHR:
+                    fprintf(stderr, "binary op: shift right\n");
+                    break;
+                case OP_LTEQ:
+                    fprintf(stderr, "binary op: <=\n");
+                    break;
+                case OP_GTEQ:
+                    fprintf(stderr, "binary op: >=\n");
+                    break;
+                case OP_EQEQ:
+                    fprintf(stderr, "binary op: ==\n");
+                    break;
+                case OP_NOTEQ:
+                    fprintf(stderr, "binary op: !=\n");
+                    break;
+                case OP_LOGAND:
+                    fprintf(stderr, "binary op: &&\n");
+                    break;
+                case OP_LOGOR:
+                    fprintf(stderr, "binary op: ||\n");
+                    break;
+                case OP_ELLIPSIS:
+                    fprintf(stderr, "binary op: ...\n");
+                    break;
+                case OP_TIMESEQ:
+                    fprintf(stderr, "binary op: >>\n");
+                    break;
+                case OP_DIV:
+                    fprintf(stderr, "binary op: /\n");
+                    break;
+                case OP_MOD:
+                    fprintf(stderr, "binary op: %\n");
+                    break;
+                case OP_ADD:
+                    fprintf(stderr, "binary op: +\n");
+                    break;
+                case OP_SUB:
+                    fprintf(stderr, "binary op: -\n");
+                    break;
+                case OP_MULT:
+                    fprintf(stderr, "binary op: *\n");
+                     break;
+                case OP_LT:
+                    fprintf(stderr, "binary op: <\n");
+                    break;
+                case OP_GT:
+                    fprintf(stderr, "binary op: >\n");
+                    break;
+                case OP_AND:
+                    fprintf(stderr, "binary op: &\n");
+                    break;
+                case OP_OR:
+                    fprintf(stderr, "binary op: |\n");
+                    break;
+                case OP_EQ:
+                    fprintf(stderr, "binary op: =\n");
+                    break;
+                case OP_XOR:
+                    fprintf(stderr, "binary op: ^\n");
+                    break;
+            }
+            print_ast(root->astnode_binop.left, level+1);
+            print_ast(root->astnode_binop.right, level+1);
+            break;
+        case AST_IF:
+            fprintf(stderr, "IF:\n");
+            print_ast(root->astnode_if.test, level + 1);
             break;
         case AST_GOTO:
             break;
         case AST_WHILE:
+            fprintf(stderr, "WHILE:\n");
+            print_ast(root->astnode_while.test, level + 1);
+            break;
+        case AST_DOWHILE:
+            fprintf(stderr, "DO WHILE:\n");
+            print_ast(root->astnode_if.test, level + 1);
             break;
     }
 }

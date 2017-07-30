@@ -1,0 +1,145 @@
+Declarations:
+
+	Input:
+		int i1;
+		unsigned int ui1;
+		unsigned ui2;
+		long unsigned ul1;
+		const i2;
+		signed i3;
+		volatile unsigned ui3;
+		char c1;
+		unsigned char c2;
+		signed char c3;
+		long long ll1;
+		unsigned long long ull1;
+		short s1;
+		unsigned short us1;
+		volatile signed short s3;
+		double d;
+		long double ld;
+		float f;
+		const float f2;
+
+	Output:
+		Starting program: /home/sheng/Programming/compilers/parser < tests/base.e
+		Scope pushed.
+		i1 defined at base.c:1 as a variable of type:
+		   signed int
+		ui1 defined at base.c:2 as a variable of type:
+		   unsigned int
+		ui2 defined at base.c:3 as a variable of type:
+		   unsigned int
+		ul1 defined at base.c:4 as a variable of type:
+		   unsigned long
+		i2 defined at base.c:5 as a variable of type:
+		   const int
+		i3 defined at base.c:6 as a variable of type:
+		   signed int
+		ui3 defined at base.c:7 as a variable of type:
+		   volatile int
+		c1 defined at base.c:8 as a variable of type:
+		   char
+		c2 defined at base.c:9 as a variable of type:
+		   unsigned char
+		c3 defined at base.c:10 as a variable of type:
+		   signed char
+		ll1 defined at base.c:11 as a variable of type:
+		   signed long
+		ull1 defined at base.c:12 as a variable of type:
+		   unsigned long
+		s1 defined at base.c:13 as a variable of type:
+		   signed short
+		us1 defined at base.c:14 as a variable of type:
+		   unsigned short
+		s3 defined at base.c:15 as a variable of type:
+		   volatile int
+		d defined at base.c:16 as a variable of type:
+		   double
+		ld defined at base.c:17 as a variable of type:
+		   long double
+		f defined at base.c:18 as a variable of type:
+		   float
+		f2 defined at base.c:19 as a variable of type:
+		   const int
+		Parse error at line 20 in file 'base.c': syntax error.
+		-- PRINTING SYMBOL TABLES --
+		[File Scope]
+		namespace | symbol
+		(default)   i1
+		(default)   ui1
+		(default)   ui2
+		(default)   ul1
+		(default)   i2
+		(default)   i3
+		(default)   ui3
+		(default)   c1
+		(default)   c2
+		(default)   c3
+		(default)   ll1
+		(default)   ull1
+		(default)   s1
+		(default)   us1
+		(default)   s3
+		(default)   d
+		(default)   ld
+		(default)   f
+		(default)   f2
+		[Inferior 1 (process 7810) exited normally]
+
+Scopes:
+	Input:
+		int a;
+
+		int f(void)
+		{
+			int a;
+			{
+				int a;
+				int b;
+			}
+			int b;
+		}
+
+		int b;
+
+	Output:
+		Starting program: /home/sheng/Programming/compilers/parser < tests/scope1.c
+		Scope pushed.
+		a defined at :0 as a variable of type:
+		   signed int
+		Scope pushed.
+		a defined at :4 as a variable of type:
+		   signed int
+		Scope pushed.
+		a defined at :6 as a variable of type:
+		   signed int
+		b defined at :7 as a variable of type:
+		   signed int
+		Scope popped.
+		b defined at :9 as a variable of type:
+		   signed int
+		Scope popped.
+		b defined at :12 as a variable of type:
+		   signed int
+		Parse error at line 14 in file '': syntax error.
+		-- PRINTING SYMBOL TABLES --
+		[File Scope]
+		namespace | symbol
+		(default)   a
+		(default)   b
+		[Inferior 1 (process 24493) exited normally]
+
+Expressions:
+		Starting program: /home/sheng/Programming/compilers/parser < expressions.c
+		Scope pushed.
+		Scope pushed.
+		a defined at :2 as a variable of type:
+		   signed int
+		b defined at :2 as a variable of type:
+		   signed int
+		binary op: +
+		binary op: =
+		binary op: =
+		binary op: *
+		Scope popped.

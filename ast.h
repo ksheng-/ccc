@@ -1,6 +1,8 @@
 #ifndef AST_H
 #define AST_H
 
+#include "ptypes.h"
+
 #define SET_TYPE(var,type) ((var) |= (1 << (type)))
 #define POW2(type) (1 << (type))
 
@@ -31,12 +33,18 @@ enum astnode_code
     AST_ARRAY,
 
     AST_NUMBER,
+    AST_CHARLIT,
+    AST_STRING,
+
+    AST_DEREF,
     AST_CALL,
+    AST_OP,
+    AST_BINOP,
 
     AST_IF,
-    AST_IFELSE,
     AST_GOTO,
-    AST_WHILE
+    AST_WHILE,
+    AST_DOWHILE,
 };
 
 enum storage_classes
@@ -91,6 +99,42 @@ enum type_qualifiers
     QUAL_VOLATILE,
 };
 
+enum operations
+{
+	OP_PREINC,
+	OP_POSTINC,
+    OP_PREDEC,
+    OP_POSTDEC,
+    OP_ADDROF,
+    OP_DEREF,
+    OP_POS,
+    OP_NEG,
+    OP_NOT,
+    OP_LOGNOT,
+	OP_SHL,
+	OP_SHR,
+	OP_LTEQ,
+	OP_GTEQ,
+	OP_EQEQ,
+	OP_NOTEQ,
+	OP_LOGAND,
+	OP_LOGOR,
+	OP_ELLIPSIS,
+	OP_TIMESEQ,
+	OP_DIV,
+	OP_MOD,
+	OP_ADD,
+	OP_SUB,
+    OP_MULT,
+    OP_LT,
+    OP_GT,
+    OP_AND,
+    OP_OR,
+    OP_EQ,
+    OP_XOR
+
+};
+
 union astnode
 {
     struct astnode_null {
@@ -138,7 +182,7 @@ union astnode
 
     struct astnode_tag {
         enum astnode_code type;
-        char *name;
+        char name[32];
         struct scope *s;
         int complete; 
     } astnode_tag;
@@ -196,17 +240,51 @@ union astnode
     } astnode_array;
 
     struct astnode_number {
-        enum astnode_number type;
-        int val;
+        enum astnode_code type;
+        num number;
         union astnode *next;
         union astnode *prev;
-    }
+    } astnode_number;
+
+    struct astnode_charlit {
+        enum astnode_code type;
+        char ch;
+        union astnode *next;
+        union astnode *prev;
+    } astnode_charlit;
+
+    struct astnode_string {
+        enum astnode_code type;
+        char *string;
+        union astnode *next;
+        union astnode *prev;
+    } astnode_string;
+
+    struct astnode_deref {
+        enum astnode_code type;
+        union astnode *next;
+        union astnode *prev;
+    } astnode_deref;
+
+    struct astnode_call {
+        enum astnode_code type;
+        struct symrec *stab;
+        union astnode *next;
+        union astnode *prev;
+    } astnode_call;
    
     struct astnode_op {
-    }
+        enum astnode_code type;
+        int op;
+        union astnode *next;
+    } astnode_op;
 
     struct astnode_binop {
-    }
+        enum astnode_code type;
+        int op;
+        union astnode *left;
+        union astnode *right;
+    } astnode_binop;
 
     struct astnode_if {
         enum astnode_code type;
@@ -217,13 +295,18 @@ union astnode
         enum astnode_code type;
         union astnode *test, *body;
     } astnode_while;
+    
+    struct astnode_dowhile {
+        enum astnode_code type;
+        union astnode *test, *body;
+    } astnode_dowhile;
 };
 typedef union astnode astnode;
 
 void transform_typespecs(astnode *node);
 astnode *new_astnode(int type);
 void insert_astnode(astnode *node, astnode *pos);
-
+void insert_astnode_op(astnode *op, astnode *node);
 // Recursively print ast starting from root.
 void print_ast(astnode *root, int level);
 

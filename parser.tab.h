@@ -34,7 +34,7 @@
 # define YY_YY_PARSER_TAB_H_INCLUDED
 /* Debug traces.  */
 #ifndef YYDEBUG
-# define YYDEBUG 0
+# define YYDEBUG 1
 #endif
 #if YYDEBUG
 extern int yydebug;
@@ -45,70 +45,71 @@ extern int yydebug;
 # define YYTOKENTYPE
   enum yytokentype
   {
-    PLUSEQ = 258,
-    MINUSEQ = 259,
-    TIMESEQ = 260,
-    DIVEQ = 261,
-    MODEQ = 262,
-    SHLEQ = 263,
-    SHREQ = 264,
-    ANDEQ = 265,
-    XOREQ = 266,
-    OREQ = 267,
-    LOGOR = 268,
-    LOGAND = 269,
-    EQEQ = 270,
-    NOTEQ = 271,
-    LTEQ = 272,
-    GTEQ = 273,
-    SHL = 274,
-    SHR = 275,
-    PLUSPLUS = 276,
-    MINUSMINUS = 277,
-    INDSEL = 278,
-    IDENT = 279,
-    TOKEOF = 280,
-    ELLIPSIS = 281,
-    AUTO = 282,
-    BREAK = 283,
-    CASE = 284,
-    CHAR = 285,
-    CONST = 286,
-    CONTINUE = 287,
-    DEFAULT = 288,
-    DO = 289,
-    DOUBLE = 290,
-    ELSE = 291,
-    ENUM = 292,
-    EXTERN = 293,
-    FLOAT = 294,
-    FOR = 295,
-    GOTO = 296,
-    IF = 297,
-    INLINE = 298,
-    INT = 299,
-    LONG = 300,
-    REGISTER = 301,
-    RESTRICT = 302,
-    RETURN = 303,
-    SHORT = 304,
-    SIGNED = 305,
-    SIZEOF = 306,
-    STATIC = 307,
-    STRUCT = 308,
-    SWITCH = 309,
-    TYPEDEF = 310,
-    UNION = 311,
-    UNSIGNED = 312,
-    VOID = 313,
-    VOLATILE = 314,
-    WHILE = 315,
-    _BOOL = 316,
-    _COMPLEX = 317,
-    _IMAGINARY = 318,
-    STRING = 319,
-    CHARLIT = 320,
-    NUMBER = 321
+    IDENT = 258,
+    CHARLIT = 259,
+    STRING = 260,
+    NUMBER = 261,
+    TOKEOF = 262,
+    ELLIPSIS = 263,
+    AUTO = 264,
+    BREAK = 265,
+    CASE = 266,
+    CHAR = 267,
+    CONST = 268,
+    CONTINUE = 269,
+    DEFAULT = 270,
+    DO = 271,
+    DOUBLE = 272,
+    ENUM = 273,
+    EXTERN = 274,
+    FLOAT = 275,
+    FOR = 276,
+    GOTO = 277,
+    INLINE = 278,
+    INT = 279,
+    LONG = 280,
+    REGISTER = 281,
+    RESTRICT = 282,
+    RETURN = 283,
+    SHORT = 284,
+    SIGNED = 285,
+    SIZEOF = 286,
+    STATIC = 287,
+    STRUCT = 288,
+    SWITCH = 289,
+    TYPEDEF = 290,
+    UNION = 291,
+    UNSIGNED = 292,
+    VOID = 293,
+    VOLATILE = 294,
+    WHILE = 295,
+    _BOOL = 296,
+    _COMPLEX = 297,
+    _IMAGINARY = 298,
+    PLUSEQ = 299,
+    MINUSEQ = 300,
+    TIMESEQ = 301,
+    DIVEQ = 302,
+    MODEQ = 303,
+    SHLEQ = 304,
+    SHREQ = 305,
+    ANDEQ = 306,
+    XOREQ = 307,
+    OREQ = 308,
+    LOGOR = 309,
+    LOGAND = 310,
+    EQEQ = 311,
+    NOTEQ = 312,
+    LTEQ = 313,
+    GTEQ = 314,
+    SHL = 315,
+    SHR = 316,
+    INDSEL = 317,
+    PLUSPLUS = 318,
+    MINUSMINUS = 319,
+    UNARY = 320,
+    IF = 321,
+    ELSE = 322
   };
 #endif
 
@@ -117,14 +118,14 @@ extern int yydebug;
 
 union YYSTYPE
 {
-#line 12 "parser.y" /* yacc.c:1909  */
+#line 26 "parser.y" /* yacc.c:1909  */
 
-	char *string;
-	char character;
-	num number;
-	// symrec *tptr;
+    char *string;
+    char character;
+    num number;
+    astnode *node;
 
-#line 128 "parser.tab.h" /* yacc.c:1909  */
+#line 129 "parser.tab.h" /* yacc.c:1909  */
 };
 
 typedef union YYSTYPE YYSTYPE;

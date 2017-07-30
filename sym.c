@@ -96,8 +96,7 @@ symrec *find_entry(scope_stack *stack, scope *s, int ns, char *name)
     {
         return 0;
     }
-
-    while (strcmp(curr->name, name) != 0)
+    while (curr != 0 && strcmp(curr->name, name) != 0)
     {
         curr = curr->next; 
     }
@@ -255,12 +254,13 @@ void insert_sym(scope_stack *stack, int ns, char *name, astnode *node);
 astnode *find_sym(scope_stack *stack, int ns, char *name)
 {
     scope *curr = stack->front;
-
+    symrec *entry;
     while (curr != NULL)
     {
-        if ((rec = find_entry(stack, curr, ns, name)) != 0);
+        if ((entry = find_entry(stack, curr, ns, name)) != 0);
         {
-            return rec->data; 
+            if (entry)
+                return entry->data; 
         }
         curr = curr->next;
     }

@@ -1,0 +1,10 @@
+# 1 "test.c"
+# 1 "<built-in>"
+# 1 "<command-line>"
+# 31 "<command-line>"
+# 1 "/usr/include/stdc-predef.h" 1 3 4
+# 32 "<command-line>" 2
+# 1 "test.c"
+unsigned char g1;
+unsigned char g2,g3,g4;
+
